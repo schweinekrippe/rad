@@ -1,11 +1,9 @@
 import socket
 import sys
-import pickle
-from communication import *
 
-HOST, PORT = "localhost", 9999
-data = sendEmergencyStop()
-print("sended data", data)
+
+HOST, PORT = "10.42.0.1", 5000
+data = bytes("test", "utf8")
 # Create a socket (SOCK_STREAM means a TCP socket)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -19,7 +17,4 @@ try:
 finally:
     sock.close()
 
-[msgNr, msgType, timestamp, data] = unpackMsg(received)
-print("unpackedData:", msgNr, msgType, timestamp, data)
-print(processMessage(msgNr, msgType, timestamp, data))
-
+print(str(received, "utf8"))

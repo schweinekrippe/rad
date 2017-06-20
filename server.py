@@ -1,5 +1,6 @@
 import SocketServer
 import pickle
+from communication import *
 
 class MyTCPHandler(SocketServer.BaseRequestHandler):
     """
@@ -13,10 +14,11 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024)
-        print(self.data)
-        print(pickle.loads(self.data))
-        # just send back the same data, but upper-cased
-        self.request.sendall("gotcha")
+        msgNr, msgType, timestamp, data = unpackMsg(self.data)
+        packedData = processMessage(msgNr, msgType, timestamp, data)
+        self.request.sendall(packedData)
+        
+       
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 9999
