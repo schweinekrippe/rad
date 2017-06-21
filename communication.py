@@ -24,7 +24,7 @@
 
 
 
-import cPickle as pickle
+import pickle
 import time
 
 TIMEOFFSET = 0
@@ -47,21 +47,19 @@ RETURNBATTERY = 16
 
 requestnumber = 0
 receivedMessages = []
+toDoList = []
 
 def getTime():
     return time.time()-TIMEOFFSET
 
 def sendOK(answerID):
-    return(packMsg(OK, answerID))
-
-def sendTurnMsg(data):
-    pass
+    toDoList.append(packMsg(OK, answerID))
 
 def sendWarnMsg(msg):
     pass
     
 def sendEmergencyStop():
-    return(packMsg(2, "stop"))
+    toDoList.append(packMsg(2, "stop"))
     
 def sendRecordList(lst = []):
     pass
@@ -100,12 +98,13 @@ def unpackMsg(packedData):
     print("number used")
     return(False, False, None, None)
     
-def processMessage(msgNr, msgType, timestamp, data):
+def processMessage(msgNr, msgType, timestamp, data):	
     if msgType == OK:
-        return("Message with the number"+ str(data) + "received")
+        print("Message with the number " + str(data) + " received")
+        
     elif msgType == DUMMY:
         pass
         
     elif msgType == SHUTDOWN:
         #shutdown
-        return(sendOK(msgNr))
+        toDoList.append(sendOK(msgNr))
