@@ -36,13 +36,19 @@ OK = 1
 SHUTDOWN = 2
 GETSPEED = 3     # requests current speed setting
 RETURNSPEED = 13 # answers current speed setting
-SETSPEED = 23    # sets a new target speed
+SETTARGETSPEED = 23    # sets a new target speed
+GETTARGETSPEED = 33
+RETURNTARGETSPEED = 43
 GETTILT = 4      # requests the current tilt data
 RETURNTILT = 14  # answers the tilt request
 GETOBSTACLES = 5 # requests the current detected obstacles
 RETURNOBSTACLES = 15 # answers the obstacle request
 GETBATTERY = 6
 RETURNBATTERY = 16
+WARNING = 7
+SETRECORD = 8
+GETRECORDEDSTATS = 18
+RETURNRECORDEDSTATS = 28
 
 
 requestnumber = 0
@@ -54,15 +60,55 @@ def getTime():
 
 def sendOK(answerID):
     toDoList.append(packMsg(OK, answerID))
-
-def sendWarnMsg(msg):
-    pass
     
 def sendEmergencyStop():
-    toDoList.append(packMsg(2, "stop"))
+    toDoList.append(packMsg(SHUTDOWN, "stop"))
     
-def sendRecordList(lst = []):
-    pass
+def sendGetSpeed():	
+	toDoList.append(packMsg(GETSPEED, None))   
+	 
+def sendRetunSpeed(speed = 0):
+	toDoList.append(packMsg(RETURNSPEED, speed))
+	
+def sendSetTargetSpeed(targetSpeed = 0):
+	toDoList.append(packMsg(RETURNTARGETSPEED, targetSpeed))
+	
+def sendGetTargetSpeed():
+	toDoList.append(packMsg(GETTARGETSPEED, None))
+	
+def sendReturnTargetSpeed(targetSpeed = 0)		
+	toDoList.append(packMsg(RETURNTARGETSPEED, targetSpeed))
+	
+def sendGetTilt():
+	toDoList.append(packMsg(GETTILT, None)
+
+def sendReturnTilt(tilt = 0):
+	toDoList.append(packMsg(RETURNTILT, tilt))	
+
+def sendGetObstacles():		
+	toDoList.append(packMsg(GETOBSTACLES, None))
+
+def sendReturnObstacles(obstacles):	
+	toDoList.append(packMsg(RETURNOBSTACLES, obstacles))
+
+def sendGetBattery():
+	toDoList.append(packMsg(GETBATTERY, None))
+
+def sendReturnBattery(battery):	
+	toDoList.append(packMsg(RETURNBATTERY, battery))
+	
+def sendWarnMsg(msg = ""):
+    toDoList.append(packMsg(WARNING, msg))
+    
+def sendRecordList(lst = [True, True, True, True, True, True]):
+    toDoList.append(packMsg(SETRECORD, lst))
+    
+def sendGetRecordedStats():
+	toDoList.append(packMsg(GETRECORDEDSTATS, None))
+	
+def sendReturnRecordedStats(stats = [] ):
+	toDoList.append(packMsg(RETURNRECORDEDSTATS, stats))
+
    
    
 # packs and sends the final message
