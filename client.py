@@ -7,8 +7,8 @@ import time
 
 HOST, PORT = "localhost", 9999
 sendEmergencyStop()
-#~ sendEmergencyStop()
-#~ sendGetBattery()
+sendEmergencyStop()
+sendGetBattery()
 #~ print(toDoList)
 
 
