@@ -28,24 +28,10 @@ def server():
         
         
 def sender(sock):
-
     global toDoList
-    print toDoList
- 
+    
     while True:
-
-        if len(toDoList) > 0:
-            temp = toDoList
-            toDoList = []
-            print("TEMP: ",temp)
-            
-            for task in temp:
-                print("task ", task)
-                sock.sendall(task)
-            
-        
-        else:
-            time.sleep(1)
+        sock.sendall(toDoList.get())
     
 def receiver(sock):
     while True:

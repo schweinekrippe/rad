@@ -29,6 +29,7 @@
 
 import pickle
 import time
+import Queue
 
 TIMEOFFSET = 0
 TIMEOUT = 500.000
@@ -56,7 +57,9 @@ RETURNRECORDEDSTATS = 28
 
 requestnumber = 1
 receivedMessages = []
-toDoList = []
+
+
+toDoList = Queue.Queue()
 
 def getTime():
     return time.time()-TIMEOFFSET
@@ -65,56 +68,56 @@ def getTime():
 # functions to send messages
 
 def sendOK(answerID):
-    toDoList.append(packMsg(OK, answerID))
+    toDoList.put(packMsg(OK, answerID))
     
 def sendEmergencyStop():
-    toDoList.append(packMsg(SHUTDOWN, "stop"))
+    toDoList.put(packMsg(SHUTDOWN, "stop"))
     
 def sendGetSpeed(): 
-    toDoList.append(packMsg(GETSPEED, None))   
+    toDoList.put(packMsg(GETSPEED, None))   
      
 def sendReturnSpeed(speed = 0):
-    toDoList.append(packMsg(RETURNSPEED, speed))
+    toDoList.put(packMsg(RETURNSPEED, speed))
     
 def sendSetTargetSpeed(targetSpeed = 0):
-    toDoList.append(packMsg(RETURNTARGETSPEED, targetSpeed))
+    toDoList.put(packMsg(RETURNTARGETSPEED, targetSpeed))
     
 def sendGetTargetSpeed():
-    toDoList.append(packMsg(GETTARGETSPEED, None))
+    toDoList.put(packMsg(GETTARGETSPEED, None))
     
 def sendReturnTargetSpeed(targetSpeed = 0): 
-    toDoList.append(packMsg(RETURNTARGETSPEED, targetSpeed))
+    toDoList.put(packMsg(RETURNTARGETSPEED, targetSpeed))
     
 def sendGetTilt():
-    toDoList.append(packMsg(GETTILT, None))
+    toDoList.put(packMsg(GETTILT, None))
 
 def sendReturnTilt(tilt = 0):
-    toDoList.append(packMsg(RETURNTILT, tilt))  
+    toDoList.put(packMsg(RETURNTILT, tilt))  
 
 def sendGetObstacles():     
-    toDoList.append(packMsg(GETOBSTACLES, None))
+    toDoList.put(packMsg(GETOBSTACLES, None))
 
 def sendReturnObstacles(obstacles): 
-    toDoList.append(packMsg(RETURNOBSTACLES, obstacles))
+    toDoList.put(packMsg(RETURNOBSTACLES, obstacles))
 
 def sendGetBattery():
-    toDoList.append(packMsg(GETBATTERY, None))
+    toDoList.put(packMsg(GETBATTERY, None))
 
 def sendReturnBattery(battery): 
-    toDoList.append(packMsg(RETURNBATTERY, battery))
+    toDoList.put(packMsg(RETURNBATTERY, battery))
     
 def sendWarnMsg(msg = ""):
-    toDoList.append(packMsg(WARNING, msg))
+    toDoList.put(packMsg(WARNING, msg))
 
 
 def sendRecordList(lst = [True, True, True, True, True, True]):
-    toDoList.append(packMsg(SETRECORD, lst))
+    toDoList.put(packMsg(SETRECORD, lst))
     
 def sendGetRecordedStats():
-    toDoList.append(packMsg(GETRECORDEDSTATS, None))
+    toDoList.put(packMsg(GETRECORDEDSTATS, None))
     
 def sendReturnRecordedStats(stats = [] ):
-    toDoList.append(packMsg(RETURNRECORDEDSTATS, stats))
+    toDoList.put(packMsg(RETURNRECORDEDSTATS, stats))
 
 ########################################################################
 # functions to set and get data

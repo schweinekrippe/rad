@@ -6,11 +6,6 @@ import thread
 import time
 
 HOST, PORT = "localhost", 9999
-sendEmergencyStop()
-sendEmergencyStop()
-sendGetBattery()
-print("----> ",toDoList.qsize())
-
 
 
 def client():
@@ -46,7 +41,3 @@ def receiver(sock):
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-
-client()
-
-input()
