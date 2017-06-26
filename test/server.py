@@ -1,24 +1,63 @@
-#!/usr/bin/env python
-
 import socket
+import sys
 import pickle
+from communication import *
+import thread
+import time
+
+HOST, PORT = "localhost", 9999
 
 
-TCP_IP = 'localhost'
-TCP_PORT = 5005
-BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
 
-conn, addr = s.accept()
-print('Connection address:', addr)
-while 1:
-    data = conn.recv(BUFFER_SIZE)
-    print(data)
-    if not data: break
-    print("received data:", pickle.loads(data))
-    conn.send(data)  # echo
+def client():
+    global sock
+    sock.connect((HOST,PORT))
+    thread.start_new_thread( sender,(sock,))
+    thread.start_new_thread(receiver,(sock,))
+
+def server():
+    global sock
+    sock.bind((HOST, PORT))
+    sock.listen(1)
+
+    conn, addr = sock.accept()
     
-conn.close()
+    thread.start_new_thread( sender,(conn,))
+    thread.start_new_thread(receiver,(conn,))
+        
+        
+def sender(sock):
+
+    global toDoList
+    print toDoList
+ 
+    while True:
+
+        if len(toDoList) > 0:
+            temp = toDoList
+            toDoList = []
+            print("TEMP: ",temp)
+            
+            for task in temp:
+                print("task ", task)
+                sock.sendall(task)
+            
+        
+        else:
+            time.sleep(1)
+    
+def receiver(sock):
+    while True:
+        incMsg = sock.recv(1024)
+        print("incMsg", incMsg)
+        msgNr, msgType, timestamp, data = unpackMsg(incMsg)
+        processMessage(msgNr, msgType, timestamp, data)
+        print(data)
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+
+server()
+
+input()

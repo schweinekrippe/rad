@@ -1,31 +1,54 @@
-import SocketServer
+import socket
+import asyncore
 import pickle
 from communication import *
+import thread
 
-class MyTCPHandler(SocketServer.BaseRequestHandler):
-    """
-    The request handler class for our server.
+class Handler(asyncore.dispatcher_with_send):
 
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
+    def handle_read(self):
 
-    def handle(self):
-        # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024)
-        msgNr, msgType, timestamp, data = unpackMsg(self.data)
-        packedData = processMessage(msgNr, msgType, timestamp, data)
-        self.request.sendall(packedData)
+        incMsg = self.recv(100)
+        if data:
+            print("Server incMsg ", incMsg)
+            msgNr, msgType, timestamp, data = unpackMsg(incMsg)
+            processMessage(msgNr, msgType, timestamp, data)
+            print(data)
+            
+            
+            
+            
+
+class Server(asyncore.dispatcher):
+
+    def __init__(self, host, port):
+        asyncore.dispatcher.__init__(self)
+        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.set_reuse_addr()
+        self.bind((host, port))
+        self.listen(5)
+
+    def handle_accept(self):
+        pair = self.accept()
+        if pair is not None:
+            sock, addr = pair
+            print 'Incoming connection from %s' % repr(addr)
+            handler = Handler(sock)
+            
+            
+            
+def startServer(host, port):
+        global toDoList
+        server = Server(host, port)
+        asyncore.loop()
         
-       
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 9999
+    
+    thread.start_new_thread( startServer, (HOST, PORT) )
 
-    # Create the server, binding to localhost on port 9999
-    server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)
+    
+while True:
+    pass
 
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
-    server.serve_forever()
