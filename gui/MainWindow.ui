@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>522</height>
+    <width>958</width>
+    <height>541</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -33,11 +33,17 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>0</y>
-      <width>521</width>
-      <height>481</height>
+      <width>931</width>
+      <height>501</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="cursor">
      <cursorShape>ArrowCursor</cursorShape>
@@ -70,7 +76,7 @@
         <x>10</x>
         <y>10</y>
         <width>100</width>
-        <height>171</height>
+        <height>161</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -169,6 +175,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="MatplotlibWidget" name="mplwidget">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>0</y>
+        <width>841</width>
+        <height>471</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_testing">
      <attribute name="title">
@@ -193,11 +209,17 @@
      <widget class="QFrame" name="frame">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>30</y>
-        <width>151</width>
+        <x>290</x>
+        <y>20</y>
+        <width>111</width>
         <height>91</height>
        </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
@@ -211,9 +233,9 @@
       <widget class="QLabel" name="BatteryLabel">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>151</width>
+         <x>10</x>
+         <y>10</y>
+         <width>81</width>
          <height>31</height>
         </rect>
        </property>
@@ -232,10 +254,10 @@
       <widget class="QProgressBar" name="batteryState">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>30</y>
-         <width>151</width>
-         <height>41</height>
+         <x>10</x>
+         <y>40</y>
+         <width>81</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="toolTip">
@@ -257,10 +279,10 @@
       <widget class="QLabel" name="batteryImage">
        <property name="geometry">
         <rect>
-         <x>40</x>
+         <x>20</x>
          <y>40</y>
          <width>16</width>
-         <height>21</height>
+         <height>31</height>
         </rect>
        </property>
        <property name="text">
@@ -277,8 +299,8 @@
      <widget class="QPushButton" name="emergencyStopButton">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>140</y>
+        <x>250</x>
+        <y>300</y>
         <width>151</width>
         <height>151</height>
        </rect>
@@ -292,8 +314,8 @@
       </property>
       <property name="iconSize">
        <size>
-        <width>100</width>
-        <height>100</height>
+        <width>140</width>
+        <height>140</height>
        </size>
       </property>
       <property name="checkable">
@@ -309,134 +331,20 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QFrame" name="frame_2">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>300</y>
-        <width>151</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QPushButton" name="incSpeedButton">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>22</y>
-         <width>51</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>images/500px-Aiga_uparrow_inv.svg.png</normaloff>images/500px-Aiga_uparrow_inv.svg.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="autoRepeat">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="decSpeedButton">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>70</y>
-         <width>51</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>images/500px-Aiga_downarrow_inv.svg.png</normaloff>images/500px-Aiga_downarrow_inv.svg.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="autoRepeat">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="turnRightButton">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>50</y>
-         <width>51</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>images/500px-Aiga_rightarrow_inv.svg.png</normaloff>images/500px-Aiga_rightarrow_inv.svg.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="autoRepeat">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="turnLeftButton">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>50</y>
-         <width>51</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>images/500px-Aiga_leftarrow_inv.svg.png</normaloff>images/500px-Aiga_leftarrow_inv.svg.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="autoRepeat">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </widget>
      <widget class="QFrame" name="frame_3">
       <property name="geometry">
        <rect>
-        <x>230</x>
-        <y>30</y>
+        <x>0</x>
+        <y>20</y>
         <width>271</width>
         <height>91</height>
        </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -483,104 +391,13 @@
        </property>
       </widget>
      </widget>
-     <widget class="QFrame" name="tilt">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>300</y>
-        <width>171</width>
-        <height>141</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QLabel" name="tiltImage">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>171</width>
-         <height>141</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap>images/heckview.jpg</pixmap>
-       </property>
-       <property name="scaledContents">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="steeringImage">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>171</width>
-         <height>141</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap>images/topview.jpg</pixmap>
-       </property>
-       <property name="scaledContents">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="obstaclesImage">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>171</width>
-         <height>141</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap>images/backyard-obstacle-course-map.jpg</pixmap>
-       </property>
-       <property name="scaledContents">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </widget>
      <widget class="QListWidget" name="msgList">
       <property name="geometry">
        <rect>
-        <x>230</x>
-        <y>140</y>
-        <width>271</width>
-        <height>151</height>
+        <x>10</x>
+        <y>120</y>
+        <width>391</width>
+        <height>161</height>
        </rect>
       </property>
       <property name="font">
@@ -619,94 +436,392 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QWidget" name="verticalLayoutWidget_3">
+     <widget class="QFrame" name="frame_2">
       <property name="geometry">
        <rect>
-        <x>410</x>
-        <y>300</y>
-        <width>93</width>
-        <height>141</height>
+        <x>420</x>
+        <y>20</y>
+        <width>511</width>
+        <height>441</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="spacing">
-        <number>0</number>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="tiltImage">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>431</width>
+         <height>431</height>
+        </rect>
        </property>
-       <property name="sizeConstraint">
-        <enum>QLayout::SetMaximumSize</enum>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
        </property>
-       <property name="leftMargin">
-        <number>5</number>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
        </property>
-       <property name="topMargin">
-        <number>6</number>
+       <property name="text">
+        <string/>
        </property>
-       <item>
-        <widget class="QRadioButton" name="tiltButton">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>tilt</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="steeringButton">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>steering</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="obstaclesButton">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>obstacles</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="videoButton">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>video</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+       <property name="pixmap">
+        <pixmap>images/heckview.jpg</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="steeringImage">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>431</width>
+         <height>431</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>images/topview.jpg</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="obstaclesImage">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>431</width>
+         <height>431</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>images/backyard-obstacle-course-map.jpg</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QwtCompass" name="Compass">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>431</width>
+         <height>431</height>
+        </rect>
+       </property>
+       <property name="visibleBackground" stdset="0">
+        <bool>true</bool>
+       </property>
+       <property name="lineWidth">
+        <number>4</number>
+       </property>
+      </widget>
+      <widget class="QWidget" name="verticalLayoutWidget_3">
+       <property name="geometry">
+        <rect>
+         <x>430</x>
+         <y>0</y>
+         <width>74</width>
+         <height>431</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMaximumSize</enum>
+        </property>
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="tiltButton">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>tilt</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="steeringButton">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>steering</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="obstaclesButton">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>obstacles</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="videoButton">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>video</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="videoButton_2">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>compass</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QFrame" name="ControllFrame">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>300</y>
+        <width>251</width>
+        <height>161</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QSlider" name="tiltSlider">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>130</y>
+         <width>191</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="minimum">
+        <number>-90</number>
+       </property>
+       <property name="maximum">
+        <number>90</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QSlider" name="speedSlider">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>10</y>
+         <width>22</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>40</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+      <widget class="QFrame" name="targetSpeedFrame">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>10</y>
+         <width>81</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLCDNumber" name="targetSpeed">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>20</y>
+          <width>71</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="targetSpeedLabel">
+        <property name="geometry">
+         <rect>
+          <x>5</x>
+          <y>3</y>
+          <width>71</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>target speed</string>
+        </property>
+       </widget>
+       <widget class="QLCDNumber" name="targetSpeedChanged">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>20</y>
+          <width>71</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLCDNumber{
+    color: rgb(255, 0, 0); 
+}</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QFrame" name="targetAngleFrame">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>10</y>
+         <width>81</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLCDNumber" name="targtAngle">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>20</y>
+          <width>71</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="targetAngleLabel">
+        <property name="geometry">
+         <rect>
+          <x>5</x>
+          <y>0</y>
+          <width>61</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>target angle</string>
+        </property>
+       </widget>
+       <widget class="QLCDNumber" name="targtAngleChanged">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>20</y>
+          <width>71</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLCDNumber{
+    color: rgb(255, 0, 0); 
+}</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QPushButton" name="submitSpeedAndTilt">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>90</y>
+         <width>171</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>submit</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>
@@ -717,7 +832,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>539</width>
+     <width>958</width>
      <height>21</height>
     </rect>
    </property>
@@ -727,6 +842,7 @@
     </property>
     <addaction name="actionSet_IP"/>
     <addaction name="actionLock_settings"/>
+    <addaction name="actionConnect_to_bike"/>
    </widget>
    <addaction name="menuConfig"/>
   </widget>
@@ -740,15 +856,38 @@
     <string>Lock settings</string>
    </property>
   </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionConnect_to_bike">
+   <property name="text">
+    <string>Connect to bike</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MatplotlibWidget</class>
+   <extends>QWidget</extends>
+   <header>matplotlibwidget</header>
+  </customwidget>
+  <customwidget>
+   <class>QwtCompass</class>
+   <extends>QwtDial</extends>
+   <header>qwt_compass.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QwtDial</class>
+   <extends>QWidget</extends>
+   <header>qwt_dial.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
   <tabstop>emergencyStopButton</tabstop>
   <tabstop>msgList</tabstop>
-  <tabstop>incSpeedButton</tabstop>
-  <tabstop>turnLeftButton</tabstop>
-  <tabstop>turnRightButton</tabstop>
-  <tabstop>decSpeedButton</tabstop>
   <tabstop>tiltButton</tabstop>
   <tabstop>steeringButton</tabstop>
   <tabstop>obstaclesButton</tabstop>
@@ -768,12 +907,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>430</x>
-     <y>360</y>
+     <x>927</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
-     <x>385</x>
-     <y>358</y>
+     <x>687</x>
+     <y>131</y>
     </hint>
    </hints>
   </connection>
@@ -784,12 +923,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>461</x>
-     <y>373</y>
+     <x>958</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
-     <x>407</x>
-     <y>375</y>
+     <x>709</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>
@@ -800,12 +939,220 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>467</x>
-     <y>398</y>
+     <x>964</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel">
-     <x>385</x>
-     <y>392</y>
+     <x>687</x>
+     <y>165</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetSpeed</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>37</x>
+     <y>375</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>72</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetSpeedChanged</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>37</x>
+     <y>394</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>79</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetSpeed</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>35</x>
+     <y>365</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>73</x>
+     <y>379</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitSpeedAndTilt</sender>
+   <signal>clicked()</signal>
+   <receiver>targetSpeed</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>441</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>117</x>
+     <y>377</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitSpeedAndTilt</sender>
+   <signal>clicked()</signal>
+   <receiver>targetSpeedChanged</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>441</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>110</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetSpeedChanged</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>38</x>
+     <y>408</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>71</x>
+     <y>400</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tiltSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targtAngle</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>478</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>396</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tiltSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targtAngleChanged</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>474</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tiltSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targtAngle</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>174</x>
+     <y>473</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>396</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tiltSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targtAngleChanged</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>202</x>
+     <y>474</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>402</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitSpeedAndTilt</sender>
+   <signal>clicked()</signal>
+   <receiver>targtAngle</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>436</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>394</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitSpeedAndTilt</sender>
+   <signal>clicked()</signal>
+   <receiver>targtAngleChanged</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>120</x>
+     <y>446</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>204</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>videoButton_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Compass</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>971</x>
+     <y>146</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>754</x>
+     <y>222</y>
     </hint>
    </hints>
   </connection>

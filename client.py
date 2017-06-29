@@ -5,7 +5,7 @@ from communication import *
 import thread
 import time
 
-HOST, PORT = "localhost", 9999
+HOST, PORT = "10.42.0.1", 9999
 sendEmergencyStop()
 sendEmergencyStop()
 sendGetBattery()
