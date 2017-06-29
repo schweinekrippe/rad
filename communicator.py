@@ -11,15 +11,12 @@ class Communicator():
     
     HOST, PORT = "10.42.0.1", 9999
 
-    def __init__(self, host, port, toDoList):
+    def __init__(self, host, port):
         
         self.HOST = host
         self.port = port
-        self.toDoList = toDoList
-        
-        sendEmergencyStop()
-        sendGetBattery()
-        
+        self.toDoList = Queue.Queue()
+                
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client()
 
@@ -50,10 +47,8 @@ class Communicator():
     def receiver(self, sock):
         while True:
             incMsg = sock.recv(1024)
-            print("incMsg", incMsg)
             msgNr, msgType, timestamp, data = unpackMsg(incMsg)
             processMessage(msgNr, msgType, timestamp, data)
-            print(data)
     
     
 

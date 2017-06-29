@@ -20,4 +20,6 @@ class Refresher():
         
     def setTiltFqz(self, fqz):
         self.SPEEDFQZ = fqz
+        
+    def
     
