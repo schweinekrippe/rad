@@ -1,39 +1,52 @@
-from gui import*
+from gui.gui import*
 from PyQt4.QtGui import *
+
 
 import sys
 import communicator as com
+import thread
 
 MSSTEP = 0.3
 speed = 0
 lastBatteryState = 0
 
-
+host = "localhost"
+port = 9999
+server = False
 
 def init():
-    
+    global Com    
 
     
     #connect buttons
 
     ui.emergencyStopButton.clicked.connect(emergencyStop)
     
-    ui.submitSpeedAndTilt.clicked.connect()
+    ui.submitSpeedAndTilt.clicked.connect(submitTargets)
+    
+    ui.actionConnect_to_bike.triggered.connect(connectToBike)
     
     # set elements invisible
     ui.steeringImage.setVisible(False)
     ui.obstaclesImage.setVisible(False)
     ui.Compass.setVisible(False)
     
-    # start communicator
-    C = com.Communicator()
+    # init communicator
+    Com = com.Communicator(host, port, server)
+    Com.setUi(ui)
+
     
-    
+def submitTargets():
+    pass   
     
 def setTiltImage():
     None
 
+def connectToBike():
+    
 
+    thread.start_new_thread(Com.run, ())
+    
 
 def setSpeed(speed):
     ui.currentSpeed.setProperty("value", speed)
@@ -61,3 +74,5 @@ if __name__ == "__main__":
     init()
     MainWindow.show()
     sys.exit(app.exec_())
+    
+

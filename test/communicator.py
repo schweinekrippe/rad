@@ -7,11 +7,10 @@ import time
 import Queue
 
 import backend
-from PyQt4.QtGui import *
 
 class Communicator():
     
-
+    HOST, PORT = "10.42.0.1", 9999
     
     TIMEOFFSET = 0
     TIMEOUT = 5.000
@@ -37,52 +36,36 @@ class Communicator():
     RETURNRECORDEDSTATS = 28
     
     GETSTEERANGLE = 9
-    RETURNSTEERANGLE = 19
+    RETURNSTEERANGLE = 9
     GETTARGETSTEERANGLE = 29
     RETURNTARGETSTEERANGLE = 39
     
     requestnumber = 1
     receivedMessages = []
-    
-    ui = False
-    isServer = True
 
 
     def __init__(self, host = "localhost", port = 9999, server = True):
         
         self.HOST = host
-        self.PORT = port
-        self.isServer = server
-        
+        self.port = port
         self.toDoList = Queue.Queue()
         self.lock = thread.allocate_lock()
         
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
-    def setUi(self, UI):
-        self.UI = UI    
-            
-    def run(self):
-        if self.isServer:
+        if server:
             self.server()
         else:
             self.client()
 
-
     def client(self):
-        
-        try:
 
-            self.sock.connect((self.HOST,self.PORT))
-            self.R = backend.Refresher(self)
+        self.sock.connect((self.HOST,self.PORT))
+        
+        self.R = backend.Refresher(self)
 
-            thread.start_new_thread( self.sender,(self.sock,))
-            thread.start_new_thread( self.receiver,(self.sock,))
-        
-        except socket.error:
-            self.displayWarning("connection failed")
-        
-        
+        thread.start_new_thread( self.sender,(self.sock,))
+        thread.start_new_thread( self.receiver,(self.sock,))
     
     def server(self):
 
@@ -123,48 +106,41 @@ class Communicator():
     def sendGetSpeed(self): 
         self.toDoList.put(self.packMsg(self.GETSPEED, None))   
          
-    def sendReturnSpeed(self):
-        speed = self.getSpeed()
+    def sendReturnSpeed(self, speed = 0):
         self.toDoList.put(self.packMsg(self.RETURNSPEED, speed))
         
-    def sendSetTargetSpeed(self):
-        targetSpeed = self.getTargetSpeed()
+    def sendSetTargetSpeed(self, targetSpeed = 0):
         self.toDoList.put(self.packMsg(self.RETURNTARGETSPEED, targetSpeed))
         
     def sendGetTargetSpeed(self):
         self.toDoList.put(self.packMsg(self.GETTARGETSPEED, None))
         
-    def sendReturnTargetSpeed(self):
-        targetSpeed = self.getTargetSpeed()
+    def sendReturnTargetSpeed(self, targetSpeed = 0): 
         self.toDoList.put(self.packMsg(self.RETURNTARGETSPEED, targetSpeed))
         
     def sendGetTilt(self):
         self.toDoList.put(self.packMsg(self.GETTILT, None))
     
-    def sendReturnTilt(self):
-        tilt = self.getTiltAngle()
+    def sendReturnTilt(self, tilt = 0):
         self.toDoList.put(self.packMsg(self.RETURNTILT, tilt))  
     
     def sendGetObstacles(self):     
         self.toDoList.put(self.packMsg(self.GETOBSTACLES, None))
     
-    def sendReturnObstacles(self):
-        obstacles = self.getObstacles()
+    def sendReturnObstacles(self, obstacles): 
         self.toDoList.put(self.packMsg(self.RETURNOBSTACLES, obstacles))
     
     def sendGetBattery(self):
         self.toDoList.put(self.packMsg(self.GETBATTERY, None))
     
-    def sendReturnBattery(self): 
-        battery = self.getBattery()
+    def sendReturnBattery(self, battery): 
         self.toDoList.put(self.packMsg(self.RETURNBATTERY, battery))
         
     def sendWarnMsg(self, msg = ""):
         self.toDoList.put(self.packMsg(self.WARNING, msg))
     
     
-    def sendRecordList(self):
-        lst = getRecordList()
+    def sendRecordList(self, lst = [True, True, True, True, True, True]):
         self.toDoList.put(self.packMsg(self.SETRECORD, lst))
         
     def sendGetRecordedStats(self):
@@ -194,46 +170,10 @@ class Communicator():
         angle = 0
         return angle
     
-    def getSpeed(self):
-        speed = 0
-        return speed
-        
-    def getTargetSpeed(self):
-        targetSpeed = 0
-        return targetSpeed
-        
-    def getTiltAngle(self):
-        tiltAngle = 0
-        return tiltAngle
-        
-    def getObstacles(self):
-        obstacles = [[]]
-        return obstacles
     
-    def getBattery(self):
-        battery = 0
-        return battery
-        
-    def getRecordList(self):
-        recordList = [True, True, True, True, True, True]
-        return recordList
     
-    def getRecordedStats(self):
-        tilt = []
-        steering = []
-        speed = []
-        obstacles = []
-        
-        return [tilt, steering, speed, obstacles]
-        
-
-    def getTargetSteerAngle(self):
-        targetSteer = 0
-        return targetSteer
-    
-    def displayWarning(self, msg):
-        item = QListWidgetItem(msg)
-        self.UI.msgList.addItem(item)
+    def displaywarning(self, msg):
+        pass
         
     def setSpeed(self, speed):
         pass
@@ -280,23 +220,18 @@ class Communicator():
     def unpackMsg(self, packedData):
         [msgNr, msgType, timestamp, data] = pickle.loads(packedData)
         
-        
         # prevent replay
-        
-        self.lock.aquire()
         if not (msgNr in self.receivedMessages):
             self.receivedMessages.append(msgNr)
             # don't process old messages
             if self.getTime() - timestamp < self.TIMEOUT:
-                self.lock.release()    
+    
                 return(msgNr, msgType, timestamp, data)
             
             else:
                 print("timeout")
-                self.lock.release() 
                 return(False, False, None, None)
         print("number used:", msgNr, msgType)
-        self.lock.release() 
         return(False, False, None, None)
         
     def processMessage(self, msgNr, msgType, timestamp, data):    
@@ -324,25 +259,28 @@ class Communicator():
             self.setTargetSpeed(data)
             
         elif msgType == self.GETTILT:
-            self.sendReturnTilt()
+            tilt = 0
+            self.sendReturnTilt(tilt)
             
         elif msgType == self.RETURNTILT:
             self.setTilt(data)
             
         elif msgType == self.GETOBSTACLES:
-            self.sendReturnObstacles()
+            obstacles = []
+            self.sendReturnObstacles(obstacles)
         
         elif msgType == self.RETURNOBSTACLES:
             self.updateObstacleMap(data)
             
         elif msgType == self.GETBATTERY:
-            self.sendReturnBattery()
+            battery = 0
+            self.sendReturnBattery(battery)
             
         elif msgType == self.RETURNBATTERY:
             self.setBattery(data)
             
         elif msgType == self.WARNING:
-            self.displayWarning(data)
+            self.displaywarning(data)
             
         elif msgType == self.SETRECORD:
             self.setStatsToRecord(data)
