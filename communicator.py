@@ -40,6 +40,7 @@ class Communicator():
     RETURNSTEERANGLE = 19
     GETTARGETSTEERANGLE = 29
     RETURNTARGETSTEERANGLE = 39
+    SETTARGETSTEERANGLE = 49
     
     requestnumber = 1
     receivedMessages = []
@@ -78,6 +79,8 @@ class Communicator():
 
             thread.start_new_thread( self.sender,(self.sock,))
             thread.start_new_thread( self.receiver,(self.sock,))
+            
+            self.UI.connectionEstablished = True
         
         except socket.error:
             self.displayWarning("connection failed")
@@ -114,54 +117,41 @@ class Communicator():
     ########################################################################
     # functions to send messages
     
+    ## functions for server and client
+    
     def sendOK(self, answerID):
         self.toDoList.put(self.packMsg(self.OK, answerID))
+        
+    ## functions for client/gui
         
     def sendEmergencyStop(self):
         self.toDoList.put(self.packMsg(self, self.SHUTDOWN, "stop"))
         
     def sendGetSpeed(self): 
-        self.toDoList.put(self.packMsg(self.GETSPEED, None))   
-         
-    def sendReturnSpeed(self):
-        speed = self.getSpeed()
-        self.toDoList.put(self.packMsg(self.RETURNSPEED, speed))
+        self.toDoList.put(self.packMsg(self.GETSPEED, None)) 
         
     def sendSetTargetSpeed(self):
         targetSpeed = self.getTargetSpeed()
         self.toDoList.put(self.packMsg(self.RETURNTARGETSPEED, targetSpeed))
-        
-    def sendGetTargetSpeed(self):
-        self.toDoList.put(self.packMsg(self.GETTARGETSPEED, None))
+        self.UI.displayWarning("target speed: "+str(targetSpeed))
         
     def sendReturnTargetSpeed(self):
         targetSpeed = self.getTargetSpeed()
         self.toDoList.put(self.packMsg(self.RETURNTARGETSPEED, targetSpeed))
         
+        
     def sendGetTilt(self):
         self.toDoList.put(self.packMsg(self.GETTILT, None))
-    
-    def sendReturnTilt(self):
-        tilt = self.getTiltAngle()
-        self.toDoList.put(self.packMsg(self.RETURNTILT, tilt))  
-    
+        
     def sendGetObstacles(self):     
         self.toDoList.put(self.packMsg(self.GETOBSTACLES, None))
     
     def sendReturnObstacles(self):
         obstacles = self.getObstacles()
         self.toDoList.put(self.packMsg(self.RETURNOBSTACLES, obstacles))
-    
+        
     def sendGetBattery(self):
         self.toDoList.put(self.packMsg(self.GETBATTERY, None))
-    
-    def sendReturnBattery(self): 
-        battery = self.getBattery()
-        self.toDoList.put(self.packMsg(self.RETURNBATTERY, battery))
-        
-    def sendWarnMsg(self, msg = ""):
-        self.toDoList.put(self.packMsg(self.WARNING, msg))
-    
     
     def sendRecordList(self):
         lst = getRecordList()
@@ -170,22 +160,49 @@ class Communicator():
     def sendGetRecordedStats(self):
         self.toDoList.put(self.packMsg(self.GETRECORDEDSTATS, None))
         
-    def sendReturnRecordedStats(self, stats = [] ):
-        self.toDoList.put(self.packMsg(self.RETURNRECORDEDSTATS, stats))
-        
     def sendGetSteerAngle(self):
         self.toDoList.put(self.packMsg(self.GETSTEERANGLE, None))
-    
-    def sendReturnSteerAngle(self):
-        angle = self.getSteerAngle()
-        self.toDoList.put(self.packMsg(self.RETURNSTEERANGLE, angle))
-        
-    def sendGetTargetSteerAngle(self):
-        self.toDoList.put(self.packMsg(self.GETTARGETSTEERANGLE, None))
     
     def sendReturnTargetSteerAngle(self):
         angle = self.getTargetSteerAngle()
         self.toDoList.put(self.packMsg(self.RETURNTARGETSTEERANGLE, angle))
+        
+    def sendSetTargetSteerAngle(self):
+        targetAngle = self.getTargetSteerAngle()
+        self.toDoList.put(self.packMsg(self.SETTARGETSTEERANGLE, targetAngle))
+        self.UI.displayWarning("target Angle: "+str(targetAngle))
+    
+    ## functions for server/bike
+       
+    def sendReturnSpeed(self):
+        speed = self.getSpeed()
+        self.toDoList.put(self.packMsg(self.RETURNSPEED, speed))
+        
+    def sendGetTargetSpeed(self):
+        self.toDoList.put(self.packMsg(self.GETTARGETSPEED, None))
+    
+    def sendReturnTilt(self):
+        tilt = self.getTiltAngle()
+        self.toDoList.put(self.packMsg(self.RETURNTILT, tilt)) 
+    
+    def sendReturnBattery(self): 
+        battery = self.getBattery()
+        self.toDoList.put(self.packMsg(self.RETURNBATTERY, battery))
+    
+    def sendWarnMsg(self, msg = ""):
+        self.toDoList.put(self.packMsg(self.WARNING, msg))
+    
+    def sendReturnRecordedStats(self, stats = [] ):
+        self.toDoList.put(self.packMsg(self.RETURNRECORDEDSTATS, stats))
+        
+    def sendReturnSteerAngle(self):
+        angle = self.getSteerAngle()
+        self.toDoList.put(self.packMsg(self.RETURNSTEERANGLE, angle))
+    
+    def sendGetTargetSteerAngle(self):
+        self.toDoList.put(self.packMsg(self.GETTARGETSTEERANGLE, None))    
+    
+
 
     ########################################################################
     # functions to set and get data
@@ -199,8 +216,7 @@ class Communicator():
         return speed
         
     def getTargetSpeed(self):
-        targetSpeed = 0
-        return targetSpeed
+        return self.UI.tgtSpeed
         
     def getTiltAngle(self):
         tiltAngle = 0
@@ -228,8 +244,8 @@ class Communicator():
         
 
     def getTargetSteerAngle(self):
-        targetSteer = 0
-        return targetSteer
+        return self.UI.tgtSteer
+        
     
     def displayWarning(self, msg):
         item = QListWidgetItem(msg)
@@ -239,6 +255,9 @@ class Communicator():
         pass
     
     def setTargetSpeed(self, speed):
+        pass
+        
+    def setTargetSteerAngle(self, angle):
         pass
         
     def updateObstacleMap(self, data):
@@ -322,6 +341,9 @@ class Communicator():
             
         elif msgType == self.RETURNTARGETSPEED:
             self.setTargetSpeed(data)
+        
+        elif msgType == self.SETTARGETSTEERANGLE:
+            self.setTargetSteerAngle(data)
             
         elif msgType == self.GETTILT:
             self.sendReturnTilt()

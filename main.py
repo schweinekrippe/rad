@@ -1,5 +1,8 @@
 from gui.gui import*
+import gui.ipdialog as ipD
 from PyQt4.QtGui import *
+import thread
+
 
 
 import sys
@@ -14,6 +17,17 @@ host = "localhost"
 port = 9999
 server = False
 
+import sys
+from PyQt4 import QtCore, QtGui, uic
+ 
+qtCreatorFile = "gui\dialogIP.ui" # Enter file here.
+ 
+Ui_IPdialog, QtBaseClass = uic.loadUiType(qtCreatorFile)
+ 
+
+
+
+
 def init():
     global Com    
 
@@ -25,6 +39,7 @@ def init():
     ui.submitSpeedAndTilt.clicked.connect(submitTargets)
     
     ui.actionConnect_to_bike.triggered.connect(connectToBike)
+    ui.actionSet_IP.triggered.connect(ipDialog)
     
     # set elements invisible
     ui.steeringImage.setVisible(False)
@@ -35,6 +50,7 @@ def init():
     Com = com.Communicator(host, port, server)
     Com.setUi(ui)
 
+
     
 def submitTargets():
     pass   
@@ -42,23 +58,14 @@ def submitTargets():
 def setTiltImage():
     None
 
-def connectToBike():
+
     
 
-    thread.start_new_thread(Com.run, ())
-    
 
-def setSpeed(speed):
-    ui.currentSpeed.setProperty("value", speed)
 
-# send a message to the bike to stop
-def emergencyStop():
-    displayWarning("Emergency stop initiated")
 
-#sets the battery state to value (in %)
-# accepts int/float [0,100]
-def updateBatteryState(value):
-    ui.batteryState.setProperty("value", value)
+
+
 
 
 

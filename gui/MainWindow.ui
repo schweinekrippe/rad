@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>images/heckview.jpg</normaloff>images/heckview.jpg</iconset>
+    <normaloff>../../../../.designer/backup/images/heckview.jpg</normaloff>../../../../.designer/backup/images/heckview.jpg</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -315,7 +315,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/348px-Angular_lightningbolt.svg.png</pixmap>
+        <pixmap>../../../../.designer/backup/images/348px-Angular_lightningbolt.svg.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -336,7 +336,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>images/Stop.png</normaloff>images/Stop.png</iconset>
+        <normaloff>../../../../.designer/backup/images/Stop.png</normaloff>../../../../.designer/backup/images/Stop.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -416,9 +416,6 @@
         <string>Km/h</string>
        </property>
       </widget>
-      <zorder>currentSpeed</zorder>
-      <zorder>kmhLabel</zorder>
-      <zorder>stackedWidget</zorder>
      </widget>
      <widget class="QListWidget" name="msgList">
       <property name="geometry">
@@ -499,7 +496,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/heckview.jpg</pixmap>
+        <pixmap>../../../../.designer/backup/images/heckview.jpg</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -524,7 +521,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/topview.jpg</pixmap>
+        <pixmap>../../../../.designer/backup/images/topview.jpg</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -549,7 +546,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/backyard-obstacle-course-map.jpg</pixmap>
+        <pixmap>../../../../.designer/backup/images/backyard-obstacle-course-map.jpg</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
