@@ -60,25 +60,32 @@ class Communicator():
         
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
+        self.R = backend.Refresher(self)
+    
+    # sets the Ui
+    # only neccessary for the client/bike
     def setUi(self, UI):
         self.UI = UI    
-            
+        
+    # runs the communicator in Server/Client mode depending on the init type
     def run(self):
         if self.isServer:
             self.server()
         else:
             self.client()
 
-
+    # connects to a server
     def client(self):
         
         try:
 
             self.sock.connect((self.HOST,self.PORT))
-            self.R = backend.Refresher(self)
+            
 
             thread.start_new_thread( self.sender,(self.sock,))
             thread.start_new_thread( self.receiver,(self.sock,))
+            
+            self.R.start()
             
             self.UI.connectionEstablished = True
         

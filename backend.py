@@ -26,7 +26,7 @@ class Refresher():
     
     def __init__(self, con):
         self.con = con
-        self.start()
+        #~ self.start()
         thread.start_new_thread(self.updater, ())
     
     def start(self):

@@ -24,7 +24,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.setupUi(self)
         
         self.ipd = IPDialog(self)
-        selg.fzd = FQZDialog(self)
+        self.fzd = FQZDialog(self)
         
         # init variables
         self.host = "localhost"
@@ -32,8 +32,9 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.tgtSpeed = 0
         self.tgtSteer = 0
         
+        
         #test mode
-        self.connectionEstablished = True
+        self.connectionEstablished = False
         
         # set graphics
         self.tiltImg.setPixmap( QtGui.QPixmap('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckviewinv.png'))
@@ -49,6 +50,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.actionSet_IP.triggered.connect(self.ipDialog)
         self.actionConnect_to_bike.triggered.connect(self.connectToBike)
         self.submitSpeedAndTilt.clicked.connect(self.submitTargets)
+        self.actionSet_refresh_rates.triggered.connect(self.fqzDialog)
         
         
         # init the communication module
@@ -62,10 +64,14 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
     def ipDialog(self):
         self.ipd.show()
     
+    def fqzDialog(self):
+        self.fzd.show()
+    
     # display a custom message
     def displayWarning(self, msg):
         item = QListWidgetItem(msg)
         self.msgList.addItem(item)
+        self.msgList.scrollToBottom()
         
     # send a message to the bike to stop
     # TODO: send message
@@ -147,11 +153,9 @@ class IPDialog(QtGui.QMainWindow, Ui_IPdialog):
                 self.parent.port = port
                 self.parent.host = "" + str(ip1) + "." + str(ip2) + "." + str(ip3) + "." + str(ip4)
         
-                msghost = "Ip updated to: "+self.parent.host
-                msgport = "Port updated to: "+ str(self.parent.port)
-
+                msghost = "Ip updated to: "+self.parent.host + "\n Port updated to: "+ str(self.parent.port)
+                
                 self.parent.displayWarning(msghost)
-                self.parent.displayWarning(msgport)
             
             else:
                 self.parent.displayWarning("IP or host not valid")
@@ -169,46 +173,41 @@ class FQZDialog(QtGui.QMainWindow, Ui_FQZdialog):
     def __init__(self, parent):
         self.parent = parent
         QtGui.QMainWindow.__init__(self)
-        Ui_IPdialog.__init__(self)
+        Ui_FQZdialog.__init__(self)
         self.setupUi(self)
         
         
     def accept(self):
-        steerAngle = self.steer_entry.text()
-        tiltAngle = self.tilt_entry.text()
+        
+        steer = self.steer_entry.text()
+        tilt = self.tilt_entry.text()
         objects = self.objects_entry.text()
-        position = self.pposition_entry.text()
+        position = self.position_entry.text()
         speed = self.speed_entry.text()
         
-        
-        port = self.PORT_entry.text()
+        msg = "Update intervalls set to:\nSpeed: "+ speed +"\nTilt angle: " + tilt + "\n Objects: " + objects + "\n Position: " + position + "\n Steering angle: " + steer 
+
         
         try:
-            ip1 = int(ip1)
-            ip2 = int(ip2)
-            ip3 = int(ip3)
-            ip4 = int(ip4)
+            steer = float(steer)
+            tilt = float(tilt)
+            objects = float(objects)
+            position = float(position)
+            speed = float(speed)
             
-            port = int(port)
-
-            if ip1 <= 255 and ip2 <= 255 and ip3 <= 255 and ip4 <= 255 and port <= 65535:
-
-                self.parent.port = port
-                self.parent.host = "" + str(ip1) + "." + str(ip2) + "." + str(ip3) + "." + str(ip4)
-        
-                msghost = "Ip updated to: "+self.parent.host
-                msgport = "Port updated to: "+ str(self.parent.port)
-
-                self.parent.displayWarning(msghost)
-                self.parent.displayWarning(msgport)
             
-            else:
-                self.parent.displayWarning("IP or host not valid")
         
+            self.parent.Com.R.setSpeedFqz(speed)
+            self.parent.Com.R.setTiltFqz(tilt)
+            self.parent.Com.R.setObjFqz(objects)
+            self.parent.Com.R.setSteerFqz(steer)
+            self.parent.Com.R.setPosFqz(position)
+            
+            self.parent.displayWarning(msg)
+            
         except:
-            self.parent.displayWarning("IP or host not valid")
-            
-            
+            self.parent.displayWarning("Update intervalls invalid. Float or int required")
+ 
         self.close()
     
     def reject(self):
