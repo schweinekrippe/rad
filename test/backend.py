@@ -10,7 +10,6 @@ class Refresher():
     OBJFQZ = 0.2
     STEERFQZ = 0.2
     POSFQZ = 0.2
-    ORTFQZ = 0.1
     
     refresh = False
     
@@ -19,7 +18,6 @@ class Refresher():
     objLastUpdate = 0
     steerLastUpdate = 0
     posLastUpdate = 0
-    ortLastUpdate = 0
     
     pause = False
     delay = 0
@@ -64,10 +62,6 @@ class Refresher():
             if t > self.steerLastUpdate + self.STEERFQZ:
                 self.con.sendGetSteerAngle()
                 self.steerLastUpdate = t
-                
-            if t > self.ortLastUpdate + self.ORTFQZ:
-                self.con.sendGetOrientation()
-                self.ortLastUpdate = t
             
         
         
@@ -86,7 +80,4 @@ class Refresher():
     
     def setPosFqz(self, fqz):
         self.POSFQZ = fqz
-        
-    def setOrtFqz(self, fqz):
-        self.ORTFQZ = fqz
 

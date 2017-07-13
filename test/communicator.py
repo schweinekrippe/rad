@@ -9,13 +9,6 @@ import Queue
 import backend
 from PyQt4.QtGui import *
 
-class SensorData():
-    
-    def getOrientation(self):
-        return [0,0,0]
-
-
-
 class Communicator():
     
 
@@ -49,9 +42,6 @@ class Communicator():
     RETURNTARGETSTEERANGLE = 39
     SETTARGETSTEERANGLE = 49
     
-    GETORIENTATION = 10
-    RETURNORIENTATION = 110
-    
     requestnumber = 1
     receivedMessages = []
     
@@ -71,7 +61,6 @@ class Communicator():
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         self.R = backend.Refresher(self)
-        
     
     # sets the Ui
     # only neccessary for the client/bike
@@ -81,7 +70,6 @@ class Communicator():
     # runs the communicator in Server/Client mode depending on the init type
     def run(self):
         if self.isServer:
-            self.Sensor = SensorData()
             self.server()
         else:
             self.client()
@@ -191,9 +179,6 @@ class Communicator():
         targetAngle = self.getTargetSteerAngle()
         self.toDoList.put(self.packMsg(self.SETTARGETSTEERANGLE, targetAngle))
         self.UI.displayWarning("target Angle: "+str(targetAngle))
-        
-    def sendGetOrientation(self):
-        self.toDoList.put(self.packMsg(self.GETORIENTATION, None))
     
     ## functions for server/bike
        
@@ -223,13 +208,7 @@ class Communicator():
         self.toDoList.put(self.packMsg(self.RETURNSTEERANGLE, angle))
     
     def sendGetTargetSteerAngle(self):
-        self.toDoList.put(self.packMsg(self.GETTARGETSTEERANGLE, None)) 
-        
-
-    
-    def sendReturnOrientation(self):
-        ox, oy, oz = self.Sensor.getOrientation()
-        self.toDoList.put(self.packMsg(self.RETURNORIENTATION, [ox,oy, oz])
+        self.toDoList.put(self.packMsg(self.GETTARGETSTEERANGLE, None))    
     
 
 
@@ -411,13 +390,4 @@ class Communicator():
             steeringAngle = data[1]
             speed = data[2]
             obstacles = data[3]
-            
-        elif msgType == self.GETORIENTATION:
-            self.sendReturnOrientation()
-            
-        elif msgType == self.RETURNORIENTATION:
-            ox = data[0]
-            oy = data[1]
-            oz = data[2]
-            self.UI.updateTiltImg(ox)
 
