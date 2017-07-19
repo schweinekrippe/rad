@@ -8,11 +8,58 @@ import Queue
 
 import backend
 from PyQt4.QtGui import *
+from PyQt4 import QtCore, QtGui, uic
+
+import random
 
 class SensorData():
+    fakedata = range(-90, 90, 5)
+    i = 0
     
+    fakeObst = [[[1,2,3],[4,5,6]],[[1,3,2]],[[1,7,4]],[[3,2,0.5]]]
+    j = 0
+    
+    switch = True
     def getOrientation(self):
-        return [0,0,0]
+        #~ print(len(self.fakedata), self.i)
+        data = self.fakedata[self.i]
+        self.i += 1
+        if self.i == 35:
+            self.i = 0
+            
+        
+        return [0, data, 0]
+        
+    def getLinAcc(self):
+        pass
+    
+    
+    def getObstacles(self):
+        data = self.fakeObst[self.j]
+        self.j += 1
+        if self.j == 3:
+            self.j = 0
+        return data
+    
+    def getBattery(self):
+        return(random.random()*100)
+        
+    def getSpeed(self):
+        return(random.random()*35)
+        
+    def getSteer(self):
+        return(random.random()*180 -90)
+        
+    def getCamera(self):
+        if self.switch:
+            self.switch = False        
+            return(open('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckview.png', "rb").read())
+            
+        
+        else:
+            self.switch = True   
+            return(open('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckviewinv.png', "rb").read())
+        
 
 
 
@@ -21,70 +68,87 @@ class Communicator():
 
     
     TIMEOFFSET = 0
-    TIMEOUT = 5.000
+    TIMEOUT = 5000.000
     
     
     DUMMY = 0
     OK = 1
     SHUTDOWN = 2
-    GETSPEED = 3     # requests current speed setting
-    RETURNSPEED = 13 # answers current speed setting
-    SETTARGETSPEED = 23    # sets a new target speed
+    GETSPEED = 30     # requests current speed setting
+    RETURNSPEED = 31 # answers current speed setting
+    SETTARGETSPEED = 32    # sets a new target speed
     GETTARGETSPEED = 33
-    RETURNTARGETSPEED = 43
-    GETTILT = 4      # requests the current tilt data
-    RETURNTILT = 14  # answers the tilt request
-    GETOBSTACLES = 5 # requests the current detected obstacles
-    RETURNOBSTACLES = 15 # answers the obstacle request
-    GETBATTERY = 6
-    RETURNBATTERY = 16
-    WARNING = 7
-    SETRECORD = 8
-    GETRECORDEDSTATS = 18
-    RETURNRECORDEDSTATS = 28
+    RETURNTARGETSPEED = 34
+    GETTILT = 40      # requests the current tilt data
+    RETURNTILT = 41  # answers the tilt request
+    GETOBSTACLES = 50 # requests the current detected obstacles
+    RETURNOBSTACLES = 51 # answers the obstacle request
+    GETBATTERY = 60
+    RETURNBATTERY = 61
+    WARNING = 70
+    SETRECORD = 80
+    GETRECORDEDSTATS = 81
+    RETURNRECORDEDSTATS = 82
     
-    GETSTEERANGLE = 9
-    RETURNSTEERANGLE = 19
-    GETTARGETSTEERANGLE = 29
-    RETURNTARGETSTEERANGLE = 39
-    SETTARGETSTEERANGLE = 49
+    GETSTEERANGLE = 90
+    RETURNSTEERANGLE = 91
+    GETTARGETSTEERANGLE = 92
+    RETURNTARGETSTEERANGLE = 93
+    SETTARGETSTEERANGLE = 94
     
-    GETORIENTATION = 10
-    RETURNORIENTATION = 110
+    GETORIENTATION = 100
+    RETURNORIENTATION = 101
+    
+    GETCAMERAIMAGE = 110
+    RETURNCAMERAIMAGE = 111
     
     requestnumber = 1
     receivedMessages = []
     
-    ui = False
+    
     isServer = True
 
 
-    def __init__(self, host = "localhost", port = 9999, server = True):
+    def __init__(self, host = "localhost", port = 9999, server = True, parent = None):
         
         self.HOST = host
         self.PORT = port
         self.isServer = server
-        
+
         self.toDoList = Queue.Queue()
+
         self.lock = thread.allocate_lock()
-        
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        if self.isServer == False:
+            self.R = backend.Refresher(self)
+            self.UI = parent
+            #~ print(parent)
         
-        self.R = backend.Refresher(self)
+        self.Sensor = SensorData()
+        
         
     
     # sets the Ui
     # only neccessary for the client/bike
     def setUi(self, UI):
-        self.UI = UI    
+        self.UI = UI
+        #~ print("UI set")
         
     # runs the communicator in Server/Client mode depending on the init type
     def run(self):
+
         if self.isServer:
+ 
             self.Sensor = SensorData()
+
             self.server()
+
         else:
             self.client()
+            
+        #~ self.sendGetTilt()
 
     # connects to a server
     def client(self):
@@ -96,9 +160,9 @@ class Communicator():
 
             thread.start_new_thread( self.sender,(self.sock,))
             thread.start_new_thread( self.receiver,(self.sock,))
-            
+
             self.R.start()
-            
+
             self.UI.connectionEstablished = True
             self.displayWarning("connection established")
         
@@ -110,24 +174,50 @@ class Communicator():
     def server(self):
 
         self.sock.bind((self.HOST, self.PORT))
+
         self.sock.listen(1)
-    
+
         conn, addr = self.sock.accept()
-        
+
         thread.start_new_thread( self.sender,(conn,))
+
         thread.start_new_thread( self.receiver,(conn,))
+
             
             
     def sender(self, sock):
         #~ global toDoList
     
         while True:
-            sock.sendall(self.toDoList.get())
+            msg = self.toDoList.get()
+            
+            arr = []
+            lenMsg = len(msg)
+            for i in range (0, lenMsg, 1023):
+                if i >= lenMsg - 1023:
+                    arr.append(bytes(1)+msg[i:i + 1023])
+                
+                else:
+                    arr.append(bytes(0)+msg[i:i + 1023])
+            
+                
+            for element in arr:
+                sock.sendall(element)
+            
+            
     
     def receiver(self, sock):
         while True:
-            incMsg = sock.recv(1024)
-            msgNr, msgType, timestamp, data = self.unpackMsg(incMsg)
+            
+            msg = ""
+            incMsg = "0"
+    
+            while incMsg[0] == "0":
+                incMsg = sock.recv(1024)
+                msg += (incMsg[1:])
+            
+            #~ incMsg = sock.recv(1024)
+            msgNr, msgType, timestamp, data = self.unpackMsg(msg)
             self.processMessage(msgNr, msgType, timestamp, data)
     
 
@@ -163,7 +253,7 @@ class Communicator():
     def sendGetTilt(self):
         self.toDoList.put(self.packMsg(self.GETTILT, None))
         
-    def sendGetObstacles(self):     
+    def sendGetObstacles(self): 
         self.toDoList.put(self.packMsg(self.GETOBSTACLES, None))
     
     def sendReturnObstacles(self):
@@ -194,6 +284,12 @@ class Communicator():
         
     def sendGetOrientation(self):
         self.toDoList.put(self.packMsg(self.GETORIENTATION, None))
+        
+    def sendGetCameraImage(self):
+        self.toDoList.put(self.packMsg(self.GETCAMERAIMAGE, None))
+        
+    
+
     
     ## functions for server/bike
        
@@ -205,7 +301,7 @@ class Communicator():
         self.toDoList.put(self.packMsg(self.GETTARGETSPEED, None))
     
     def sendReturnTilt(self):
-        tilt = self.getTiltAngle()
+        tilt = self.getTiltAngle()[1]
         self.toDoList.put(self.packMsg(self.RETURNTILT, tilt)) 
     
     def sendReturnBattery(self): 
@@ -229,35 +325,37 @@ class Communicator():
     
     def sendReturnOrientation(self):
         ox, oy, oz = self.Sensor.getOrientation()
-        self.toDoList.put(self.packMsg(self.RETURNORIENTATION, [ox,oy, oz])
+        self.toDoList.put(self.packMsg(self.RETURNORIENTATION, [ox,oy, oz]))
     
+    def sendReturnCameraImage(self):
+        self.toDoList.put(self.packMsg(self.RETURNCAMERAIMAGE, self.getCameraImage()))
+   
 
 
     ########################################################################
     # functions to set and get data
     
     def getSteerAngle(self):
-        angle = 0
-        return angle
+        return self.Sensor.getSteer()
+        
+    def setSteerAngle(self, angle):
+        self.UI.updtSteerAngSig.emit(angle)
     
     def getSpeed(self):
-        speed = 0
-        return speed
+        return self.Sensor.getSpeed()
         
     def getTargetSpeed(self):
         return self.UI.tgtSpeed
         
     def getTiltAngle(self):
-        tiltAngle = 0
-        return tiltAngle
+        return self.Sensor.getOrientation()
         
     def getObstacles(self):
-        obstacles = [[]]
+        obstacles = self.Sensor.getObstacles()
         return obstacles
     
     def getBattery(self):
-        battery = 0
-        return battery
+        return self.Sensor.getBattery()
         
     def getRecordList(self):
         recordList = [True, True, True, True, True, True]
@@ -270,7 +368,9 @@ class Communicator():
         obstacles = []
         
         return [tilt, steering, speed, obstacles]
-        
+    
+    def getCameraImage(self):
+        return self.Sensor.getCamera()
 
     def getTargetSteerAngle(self):
         return self.UI.tgtSteer
@@ -281,30 +381,31 @@ class Communicator():
         self.UI.msgList.addItem(item)
         
     def setSpeed(self, speed):
-        pass
+        self.UI.updtSpeedSig.emit(speed)
     
     def setTargetSpeed(self, speed):
         print("target speed: ", speed)
-        pass
         
     def setTargetSteerAngle(self, angle):
-        pass
+        print("target steer angle: ", angle)
         
     def updateObstacleMap(self, data):
-        pass
-        
+        self.UI.updtObstSig.emit(data)
+
     def setTilt(self, tilt):
-        pass
+        self.UI.updtTiltSig.emit(tilt)
         
     def setBattery(self, battery):
-        pass
+        self.UI.updtBatterySig.emit(battery)
         
     def setStatsToRecord(self, stats):
         recordTilt = stats[0]
         recordSteeringAngle = stats[1]
         recordSpeedProfile = stats[2]
         recordObstacles = stats[3]
-  
+        
+    def setCameraImage(self, data):
+        self.UI.updtCameraImageSig.emit([data])
         
     ########################################################################
     # functions to handle and process messages
@@ -348,7 +449,8 @@ class Communicator():
         self.lock.release() 
         return(False, False, None, None)
         
-    def processMessage(self, msgNr, msgType, timestamp, data):    
+    def processMessage(self, msgNr, msgType, timestamp, data):
+        #~ print(msgNr, msgType, data) 
         if msgType == self.OK:
             print("Message with the number " + str(data) + " received")
             
@@ -363,16 +465,17 @@ class Communicator():
             self.sendReturnSpeed()
             
         elif msgType == self.RETURNSPEED:
-            print("speed: ", data)
             self.setSpeed(data)
             
         elif msgType == self.SETTARGETSPEED:
+            print("target speed:", data)
             self.setTargetSpeed(data)
             
         elif msgType == self.RETURNTARGETSPEED:
             self.setTargetSpeed(data)
         
         elif msgType == self.SETTARGETSTEERANGLE:
+            print("target angle:", data)
             self.setTargetSteerAngle(data)
             
         elif msgType == self.GETTILT:
@@ -420,4 +523,16 @@ class Communicator():
             oy = data[1]
             oz = data[2]
             self.UI.updateTiltImg(ox)
+            
+        elif msgType == self.GETSTEERANGLE:
+            self.sendReturnSteerAngle()
+            
+        elif msgType == self.RETURNSTEERANGLE:
+            self.setSteerAngle(data)
+            
+        elif msgType == self.GETCAMERAIMAGE:
+            self.sendReturnCameraImage()
+            
+        elif msgType == self.RETURNCAMERAIMAGE:
+            self.setCameraImage(data)
 

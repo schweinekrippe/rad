@@ -576,7 +576,7 @@ QProgressBar::chunk {
     <enum>Qt::RightToLeft</enum>
    </property>
    <property name="text">
-    <string>168</string>
+    <string>42</string>
    </property>
    <property name="maxLength">
     <number>3</number>
@@ -598,7 +598,7 @@ QProgressBar::chunk {
     <enum>Qt::RightToLeft</enum>
    </property>
    <property name="text">
-    <string>1</string>
+    <string>0</string>
    </property>
    <property name="maxLength">
     <number>3</number>
@@ -642,7 +642,7 @@ QProgressBar::chunk {
     <enum>Qt::RightToLeft</enum>
    </property>
    <property name="text">
-    <string>192</string>
+    <string>10</string>
    </property>
    <property name="maxLength">
     <number>3</number>

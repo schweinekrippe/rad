@@ -15,9 +15,7 @@ import matplotlib.figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 
-########################################################################
-# GUI files
-########################################################################
+
  
 ipFile = "C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\gui\\dialogIP.ui" # Enter file here.
  
@@ -30,22 +28,14 @@ Ui_FQZdialog, QtBaseClass = uic.loadUiType(fqzFile)
 mainFile= "C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\gui\\MainWindow2-dark.ui" # Enter file here.
  
 Ui_Main, QtBaseClass = uic.loadUiType(mainFile)
-
-########################################################################
-# Images
-########################################################################
-
-
  
  
 class MainWindow(QtGui.QMainWindow, Ui_Main):
     
-    updtTiltSig = QtCore.pyqtSignal(float)
-    updtObstSig = QtCore.pyqtSignal(list)
-    updtSpeedSig = QtCore.pyqtSignal(float)
-    updtBatterySig = QtCore.pyqtSignal(float)
-    updtSteerAngSig = QtCore.pyqtSignal(float)
-    updtCameraImageSig = QtCore.pyqtSignal(list)
+    updateTilt = QtCore.pyqtSignal(float)
+    print(updateTilt)
+    
+        
     
     # constants for the plot of the obstacles
     # distance / y-coordinate
@@ -70,8 +60,6 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.tgtSpeed = 0
         self.tgtSteer = 0
         
-        obstData = [[]]
-        
         
         #test mode
         self.connectionEstablished = False
@@ -94,22 +82,24 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.actionSet_refresh_rates.triggered.connect(self.fqzDialog)
         
         
-        self.updtTiltSig.connect(self.updateTiltImg, QtCore.Qt.QueuedConnection)
-        self.updtObstSig.connect(self.updateObstacleMap, QtCore.Qt.QueuedConnection)
-        self.updtSpeedSig.connect(self.setSpeed, QtCore.Qt.QueuedConnection)
-        self.updtBatterySig.connect(self.setBatteryState, QtCore.Qt.QueuedConnection)
-        self.updtSteerAngSig.connect(self.setSteeringAngle, QtCore.Qt.QueuedConnection)
-        self.updtCameraImageSig.connect(self.setCameraImage, QtCore.Qt.QueuedConnection)
-        #~ self.updtObstSig.connect(self.updateObstacleMap, QtCore.Qt.QueuedConnection)
-        
+        self.updateTilt.connect(self.updateTiltImg, QtCore.Qt.QueuedConnection)
+        #~ print(self.updateTilt)
         
         # setup the display
         
+        #~ self.obstMap.xlim(-5, 5)
+        #~ self.obstMap.ylim(0, 10)
+        
 
-        self.obstMap.axes.set_xlim([self.OBSTMOSTLEFT,self.OBSTMOSTRIGHT])
-        self.obstMap.axes.set_ylim([self.OBSTMINDIST,self.OBSTMAXDIST])
-        self.obstMap.axes.grid()
-
+        
+        
+        # test display
+        
+        #~ self.updateObstacleMap([[1,2,3], [3,5,2], [1,2,7], [3,5,7]])
+        #~ self.updateObstacleMap([[1,2,3], [3,5,2], [1,2,7], [3,5,7]])
+        #~ self.updateObstacleMap([[1,2,7], [3,5,7]])
+        #~ self.updateTiltImg(15)
+       
         
         
         
@@ -133,20 +123,16 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         
         
     #sets the battery state to value (in %)
-    # accepts int/float [0,100]
-    @QtCore.pyqtSlot(float) 
+    # accepts int/float [0,100]    
     def setBatteryState(self, battery):
         self.batteryState.setProperty("value", battery)
     
     # update speed
-    @QtCore.pyqtSlot(float)
     def setSpeed(self, speed):
         self.currentSpeed.setProperty("value", speed)
         
     # update steeringAngle
-    @QtCore.pyqtSlot(float)
     def setSteeringAngle(self, angle):
-        print("angle", angle)
         self.currentSteeringAngle.setProperty("value", angle)
     
     # connect to the bike
@@ -171,7 +157,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
             self.targetAngle.hide()
             self.targetAngleChanged.show()
 
-    @QtCore.pyqtSlot(float)
+    @QtCore.pyqtSlot(int)
     def updateTiltImg(self, angle = 0 ):
 
         transformation = QtGui.QTransform()
@@ -185,34 +171,21 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         
         self.tiltLabel.setText(str(angle)+ "°")
 
-    @QtCore.pyqtSlot(list)   
-    def updateObstacleMap(self, obstData):
         
-        #~ print("obstData:", obstData)
+    def updateObstacleMap(self, obstData = [[]]):
         
-        # remove the old plot and set the plot up
-        self.obstMap.axes.clear()
-        self.obstMap.axes.hold(True)
+        #~ print(obstData)
+        
+        # remove the old plot
+        self.obstMap.axes.hold(False)
+        for obst in obstData:
+            #~ obst = [1,6,6]
+            self.obstMap.axes.plot([obst[0], obst[1]], [obst[2], obst[2]], 'k-', lw=2)
+            # make sure the plot is not overwritten
+            self.obstMap.axes.hold(True)
+            
         self.obstMap.axes.set_xlim([self.OBSTMOSTLEFT,self.OBSTMOSTRIGHT])
         self.obstMap.axes.set_ylim([self.OBSTMINDIST,self.OBSTMAXDIST])
-        self.obstMap.axes.grid()
-        
-        for obst in obstData:
-            print("obst:", obst)
-            self.obstMap.axes.plot([obst[0], obst[1]], [obst[2], obst[2]], 'k-', lw=2)
-            
-        self.obstMap.axes.figure.canvas.draw_idle()
-        #~ self.obstMap.canvas.draw()
-        #~ self.obstMap.show()
-        #~ self.obstMap.update()
-        
-    @QtCore.pyqtSlot(list)   
-    def setCameraImage(self, img):   
-        image = QtGui.QImage.fromData(img[0])
-        pixmap = QtGui.QPixmap.fromImage(image)
-        self.cameraLabel.setPixmap(pixmap)
-        self.cameraLabel.update()
-        
 
 class IPDialog(QtGui.QMainWindow, Ui_IPdialog):
     def __init__(self, parent):
@@ -275,40 +248,28 @@ class FQZDialog(QtGui.QMainWindow, Ui_FQZdialog):
         position = self.position_entry.text()
         speed = self.speed_entry.text()
         
-        battery = self.battery_entry.text()
-        camera = self.camera_entry.text()
-        
-        msg = "Update intervalls set to:\nSpeed: "+ speed +"\nTilt angle: " + tilt + \
-                    "\n Objects: " + objects + "\n Position: " + position + "\n Steering angle: " + steer \
-                    + "\n Battery: " + battery + "\n Camera: " + camera
+        msg = "Update intervalls set to:\nSpeed: "+ speed +"\nTilt angle: " + tilt + "\n Objects: " + objects + "\n Position: " + position + "\n Steering angle: " + steer 
 
-        if self.parent.connectionEstablished:
-            try:
-                steer = float(steer)
-                tilt = float(tilt)
-                objects = float(objects)
-                position = float(position)
-                speed = float(speed)
-                battery = float(battery)
-                camera = float(camera)
-                
-                
+        if True:
+        #~ try:
+            steer = float(steer)
+            tilt = float(tilt)
+            objects = float(objects)
+            position = float(position)
+            speed = float(speed)
             
-                self.parent.Com.R.setSpeedFqz(speed)
-                self.parent.Com.R.setTiltFqz(tilt)
-                self.parent.Com.R.setObjFqz(objects)
-                self.parent.Com.R.setSteerFqz(steer)
-                self.parent.Com.R.setPosFqz(position)
-                self.parent.Com.R.setBattFqz(battery)
-                self.parent.Com.R.setCamFqz(camera)
-                
-                self.parent.displayWarning(msg)
-                
-            except:
-                self.parent.displayWarning("Update intervalls invalid. Float or int required")
-                
-        else:
-            self.parent.displayWarning("Establish connection first")
+            
+        
+            self.parent.Com.R.setSpeedFqz(speed)
+            self.parent.Com.R.setTiltFqz(tilt)
+            self.parent.Com.R.setObjFqz(objects)
+            self.parent.Com.R.setSteerFqz(steer)
+            self.parent.Com.R.setPosFqz(position)
+            
+            self.parent.displayWarning(msg)
+            
+        #~ except:
+            #~ self.parent.displayWarning("Update intervalls invalid. Float or int required")
  
         self.close()
     
