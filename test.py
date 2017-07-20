@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 def run():
 
-    bla = com.Communicator(host = "localhost", port = 9999, server = True)
+    bla = com.Communicator(host = "", port = 9999, server = True)
 
     bla.run()
 

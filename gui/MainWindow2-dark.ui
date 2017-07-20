@@ -1207,7 +1207,7 @@ QProgressBar::chunk {
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-1</y>
+        <y>0</y>
         <width>911</width>
         <height>451</height>
        </rect>
@@ -1228,26 +1228,76 @@ QProgressBar::chunk {
        <attribute name="title">
         <string>Speed</string>
        </attribute>
+       <widget class="MatplotlibWidget" name="speedAna">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>911</width>
+          <height>421</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
-      <widget class="QWidget" name="TiltTab">
+      <widget class="QWidget" name="OrientationTab">
        <attribute name="title">
-        <string>Tilt</string>
+        <string>Orientation</string>
        </attribute>
+       <widget class="MatplotlibWidget" name="ortAna">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>911</width>
+          <height>421</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="SteerTab">
        <attribute name="title">
         <string>Steering angle</string>
        </attribute>
+       <widget class="MatplotlibWidget" name="steerAna">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>911</width>
+          <height>421</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="AccelerationTab">
        <attribute name="title">
         <string>Acceleration</string>
        </attribute>
+       <widget class="MatplotlibWidget" name="accAna">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>911</width>
+          <height>421</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="ObstacleTab">
        <attribute name="title">
         <string>Obstacles</string>
        </attribute>
+       <widget class="MatplotlibWidget" name="obstAna">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>911</width>
+          <height>421</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
      </widget>
     </widget>
@@ -1274,6 +1324,7 @@ QProgressBar::chunk {
     <addaction name="actionSet_IP"/>
     <addaction name="actionConnect_to_bike"/>
     <addaction name="actionSet_refresh_rates"/>
+    <addaction name="actionSet_limits"/>
     <addaction name="separator"/>
     <addaction name="actionLock_settings"/>
    </widget>
@@ -1360,6 +1411,11 @@ QProgressBar::chunk {
     <string>Set refresh rates</string>
    </property>
   </action>
+  <action name="actionSet_limits">
+   <property name="text">
+    <string>Set limits</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1385,198 +1441,6 @@ QProgressBar::chunk {
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>submitSpeedAndTilt</sender>
-   <signal>clicked()</signal>
-   <receiver>targetSpeedChanged</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>184</x>
-     <y>283</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>52</x>
-     <y>153</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>steerSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>targetAngle</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>324</x>
-     <y>224</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>steerSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>targetAngleChanged</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>324</x>
-     <y>224</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>steerSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>targetAngle</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>324</x>
-     <y>224</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>steerSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>targetAngleChanged</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>324</x>
-     <y>224</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>submitSpeedAndTilt</sender>
-   <signal>clicked()</signal>
-   <receiver>targetAngle</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>184</x>
-     <y>283</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>submitSpeedAndTilt</sender>
-   <signal>clicked()</signal>
-   <receiver>targetAngleChanged</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>184</x>
-     <y>283</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>speedSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>targetSpeedChanged</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>99</x>
-     <y>224</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>67</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>speedSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>targetSpeedChanged</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>113</x>
-     <y>209</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>69</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>speedSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>targetSpeed</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>63</x>
-     <y>224</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>63</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>speedSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>targetSpeed</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>48</x>
-     <y>210</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>31</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>submitSpeedAndTilt</sender>
-   <signal>clicked()</signal>
-   <receiver>targetSpeed</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>184</x>
-     <y>283</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>31</x>
-     <y>175</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>actionInvert</sender>
    <signal>triggered()</signal>
@@ -1654,6 +1518,198 @@ QProgressBar::chunk {
     <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetSpeed</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>63</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetSpeed</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>48</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitSpeedAndTilt</sender>
+   <signal>clicked()</signal>
+   <receiver>targetSpeedChanged</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>283</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>52</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>steerSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetAngleChanged</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitSpeedAndTilt</sender>
+   <signal>clicked()</signal>
+   <receiver>targetAngle</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>283</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>steerSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetAngle</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetSpeedChanged</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>209</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>69</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>steerSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetAngle</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>steerSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetAngleChanged</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>speedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>targetSpeedChanged</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>67</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitSpeedAndTilt</sender>
+   <signal>clicked()</signal>
+   <receiver>targetAngleChanged</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>283</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitSpeedAndTilt</sender>
+   <signal>clicked()</signal>
+   <receiver>targetSpeed</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>283</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>175</y>
     </hint>
    </hints>
   </connection>

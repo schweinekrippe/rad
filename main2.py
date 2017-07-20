@@ -27,9 +27,15 @@ fqzFile = "C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\gui\\dialogFQZ.ui" #
  
 Ui_FQZdialog, QtBaseClass = uic.loadUiType(fqzFile)
 
+limFile = "C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\gui\\dialogLIM.ui"
+
+Ui_LIMdialog, QtBaseClass = uic.loadUiType(limFile)
+
 mainFile= "C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\gui\\MainWindow2-dark.ui" # Enter file here.
  
 Ui_Main, QtBaseClass = uic.loadUiType(mainFile)
+
+
 
 ########################################################################
 # Images
@@ -63,12 +69,16 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         
         self.ipd = IPDialog(self)
         self.fzd = FQZDialog(self)
+        self.lmd = LIMDialog(self)
         
         # init variables
-        self.host = "localhost"
+        self.host = "10.42.0.1"
         self.port = 9999
         self.tgtSpeed = 0
         self.tgtSteer = 0
+        
+        self.maxTilt = 30
+        self.minTilt = 0
         
         obstData = [[]]
         
@@ -92,6 +102,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.actionConnect_to_bike.triggered.connect(self.connectToBike)
         self.submitSpeedAndTilt.clicked.connect(self.submitTargets)
         self.actionSet_refresh_rates.triggered.connect(self.fqzDialog)
+        self.actionSet_limits.triggered.connect(self.limDialog)
         
         
         self.updtTiltSig.connect(self.updateTiltImg, QtCore.Qt.QueuedConnection)
@@ -119,6 +130,9 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
     
     def fqzDialog(self):
         self.fzd.show()
+        
+    def limDialog(self):
+        self.lmd.show()
     
     # display a custom message
     def displayWarning(self, msg):
@@ -146,7 +160,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
     # update steeringAngle
     @QtCore.pyqtSlot(float)
     def setSteeringAngle(self, angle):
-        print("angle", angle)
+        #~ print("angle", angle)
         self.currentSteeringAngle.setProperty("value", angle)
     
     # connect to the bike
@@ -162,6 +176,10 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         
             self.Com.sendSetTargetSpeed()
             self.Com.sendSetTargetSteerAngle()
+            
+            self.steerSlider.setValue(0)
+            self.targetAngle.show()
+            self.targetAngleChanged.hide()
         
         else:
             self.displayWarning("Establish connection first")
@@ -198,7 +216,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.obstMap.axes.grid()
         
         for obst in obstData:
-            print("obst:", obst)
+            #~ print("obst:", obst)
             self.obstMap.axes.plot([obst[0], obst[1]], [obst[2], obst[2]], 'k-', lw=2)
             
         self.obstMap.axes.figure.canvas.draw_idle()
@@ -310,6 +328,37 @@ class FQZDialog(QtGui.QMainWindow, Ui_FQZdialog):
         else:
             self.parent.displayWarning("Establish connection first")
  
+        self.close()
+    
+    def reject(self):
+        self.close()
+ 
+class LIMDialog(QtGui.QMainWindow, Ui_LIMdialog):
+    def __init__(self, parent):
+        self.parent = parent
+        QtGui.QMainWindow.__init__(self)
+        Ui_LIMdialog.__init__(self)
+        self.setupUi(self)
+        
+        
+    def accept(self):
+        # upper bound
+        ub = self.maxTilt_entry.text()
+        # lower bound
+        lb = self.minTilt_entry.text()
+        
+        if self.parent.connectionEstablished:
+            try:
+                self.maxTilt = float(ub)
+                self.minTilt = float(lb)
+
+                self.parent.Com.sendUpdateLimits()
+            except:
+                self.parent.displayWarning("The limits need to be float or int")
+        
+        else:
+            self.parent.displayWarning("Establish connection first")
+
         self.close()
     
     def reject(self):

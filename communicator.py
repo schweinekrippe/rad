@@ -102,6 +102,8 @@ class Communicator():
     GETCAMERAIMAGE = 110
     RETURNCAMERAIMAGE = 111
     
+    UPDATELIMITS = 120
+    
     requestnumber = 1
     receivedMessages = []
     
@@ -109,7 +111,7 @@ class Communicator():
     isServer = True
 
 
-    def __init__(self, host = "localhost", port = 9999, server = True, parent = None):
+    def __init__(self, host = "", port = 9999, server = True, parent = None):
         
         self.HOST = host
         self.PORT = port
@@ -217,8 +219,12 @@ class Communicator():
                 msg += (incMsg[1:])
             
             #~ incMsg = sock.recv(1024)
-            msgNr, msgType, timestamp, data = self.unpackMsg(msg)
-            self.processMessage(msgNr, msgType, timestamp, data)
+            try:
+                msgNr, msgType, timestamp, data = self.unpackMsg(msg)
+                self.processMessage(msgNr, msgType, timestamp, data)
+            except:
+                pass
+                #~ self.UI.displayWarning("Command lost")
     
 
     def getTime(self):
@@ -288,7 +294,10 @@ class Communicator():
     def sendGetCameraImage(self):
         self.toDoList.put(self.packMsg(self.GETCAMERAIMAGE, None))
         
-    
+    def sendUpdateLimits(self):
+        
+        minTilt, maxTilt = self.getLimits()
+        self.toDoList.put(self.packMsg(self.UPDATELIMITS , [minTilt, maxTilt]))
 
     
     ## functions for server/bike
@@ -375,6 +384,9 @@ class Communicator():
     def getTargetSteerAngle(self):
         return self.UI.tgtSteer
         
+    def getLimits(self):
+        print(5)
+        return(self.UI.minTilt, self.UI.maxTilt)       
     
     def displayWarning(self, msg):
         item = QListWidgetItem(msg)
@@ -407,6 +419,9 @@ class Communicator():
     def setCameraImage(self, data):
         self.UI.updtCameraImageSig.emit([data])
         
+    def setUpdateLimits(self, data):
+        pass
+        
     ########################################################################
     # functions to handle and process messages
     
@@ -428,6 +443,7 @@ class Communicator():
     
     # in case of invalid msg, the type is returned as False
     def unpackMsg(self, packedData):
+        
         [msgNr, msgType, timestamp, data] = pickle.loads(packedData)
         
         
@@ -535,4 +551,7 @@ class Communicator():
             
         elif msgType == self.RETURNCAMERAIMAGE:
             self.setCameraImage(data)
+            
+        elif msgType == self.UPDATELIMITS:
+            self.setLimits(data)
 
