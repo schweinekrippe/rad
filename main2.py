@@ -5,6 +5,7 @@
 
 import sys
 from PyQt4 import QtCore, QtGui, uic
+
 import gui.ipdialog as ipD
 from PyQt4.QtGui import *
 import thread
@@ -14,6 +15,9 @@ import matplotlib
 import matplotlib.figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from PIL import Image, ImageQt
+import numpy
+import cv2
 
 ########################################################################
 # GUI files
@@ -72,7 +76,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.lmd = LIMDialog(self)
         
         # init variables
-        self.host = "10.42.0.1"
+        self.host = "localhost"
         self.port = 9999
         self.tgtSpeed = 0
         self.tgtSteer = 0
@@ -80,7 +84,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.maxTilt = 30
         self.minTilt = 0
         
-        obstData = [[]]
+        self.cameraPixmap = QtGui.QPixmap('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckviewinv.png')
         
         
         #test mode
@@ -166,7 +170,6 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
     # connect to the bike
     def connectToBike(self):
         self.Com = com.Communicator(self.host, self.port, server=False, parent = self)
-        #~ self.Com.setUi(self)
         thread.start_new_thread(self.Com.run, ())
         
     def submitTargets(self):
@@ -174,8 +177,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
             self.tgtSpeed = self.speedSlider.value()
             self.tgtSteer = self.steerSlider.value()
         
-            self.Com.sendSetTargetSpeed()
-            self.Com.sendSetTargetSteerAngle()
+            self.Com.sendSetTargets()
             
             self.steerSlider.setValue(0)
             self.targetAngle.show()
@@ -201,7 +203,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.tiltImg.setPixmap(pixmap)
         self.tiltImg.update()
         
-        self.tiltLabel.setText(str(angle)+ "°")
+        self.tiltLabel.setText(str(int(angle)) +  u' °')
 
     @QtCore.pyqtSlot(list)   
     def updateObstacleMap(self, obstData):
@@ -225,10 +227,18 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         #~ self.obstMap.update()
         
     @QtCore.pyqtSlot(list)   
-    def setCameraImage(self, img):   
-        image = QtGui.QImage.fromData(img[0])
-        pixmap = QtGui.QPixmap.fromImage(image)
-        self.cameraLabel.setPixmap(pixmap)
+    def setCameraImage(self, data):   
+        data = numpy.fromstring(data[0], dtype='uint8')
+        data = data.reshape((798, 192, 3))
+        height, width = data.shape[:2]
+        
+        # cv images are BGR -> Convert to RGB
+        data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+
+        img = QtGui.QImage(data, width, height, width*3, QtGui.QImage.Format_RGB888)
+        self.cameraPixmap = QtGui.QPixmap.fromImage(img)
+
+        self.cameraLabel.setPixmap(self.cameraPixmap)
         self.cameraLabel.update()
         
 

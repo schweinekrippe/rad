@@ -9,8 +9,13 @@ import Queue
 import backend
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui, uic
+from PIL import Image, ImageQt
 
 import random
+import cv2
+import numpy
+
+
 
 class SensorData():
     fakedata = range(-90, 90, 5)
@@ -52,23 +57,36 @@ class SensorData():
         
     def getCamera(self):
         if self.switch:
-            self.switch = False        
-            return(open('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckview.png', "rb").read())
+            #~ print("called")
+            self.switch = False
+            
+            return(cv2.imread('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckview.png',1))
+            #~ tmp = tmp.tostring()
+            
+            #~ print("tmp:", tmp, type(tmp))
+            #~ return(tmp)
             
         
         else:
             self.switch = True   
-            return(open('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckviewinv.png', "rb").read())
+            return(cv2.imread('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckviewinv.png', 1))
+            #~ return(open('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckviewinv.png', "rb").read())
         
 
 
 
 class Communicator():
     
-
+    BUFFSIZE = 1024
     
     TIMEOFFSET = 0
     TIMEOUT = 5000.000
+    
+    # messages are sent in order of their priority
+    TOPPRIORITY = 0
+    HIGHPRIORITY = 1
+    NORMALPRIORITY = 2
+    LOWPRIORITY = 3
     
     
     DUMMY = 0
@@ -104,6 +122,8 @@ class Communicator():
     
     UPDATELIMITS = 120
     
+    SETTARGETS = 130 # [tgtSpeed, tgtAngle]
+    
     requestnumber = 1
     receivedMessages = []
     
@@ -117,7 +137,7 @@ class Communicator():
         self.PORT = port
         self.isServer = server
 
-        self.toDoList = Queue.Queue()
+        self.toDoList = Queue.PriorityQueue()
 
         self.lock = thread.allocate_lock()
 
@@ -188,43 +208,42 @@ class Communicator():
             
             
     def sender(self, sock):
-        #~ global toDoList
-    
+
         while True:
-            msg = self.toDoList.get()
-            
+            #~ time.sleep(0.1)
             arr = []
+            priority, msg = self.toDoList.get()
             lenMsg = len(msg)
-            for i in range (0, lenMsg, 1023):
-                if i >= lenMsg - 1023:
-                    arr.append(bytes(1)+msg[i:i + 1023])
-                
+            for i in range (0, lenMsg, self.BUFFSIZE-1):
+                if i >= lenMsg - self.BUFFSIZE-1:
+                    arr.append(bytes(1)+msg[i:i + self.BUFFSIZE-1])
+                        
                 else:
-                    arr.append(bytes(0)+msg[i:i + 1023])
-            
-                
+                    arr.append(bytes(0)+msg[i:i + self.BUFFSIZE-1])
+        
             for element in arr:
-                sock.sendall(element)
+                sock.sendall(element)        
+    
+       
             
             
     
     def receiver(self, sock):
         while True:
-            
+
             msg = ""
             incMsg = "0"
     
             while incMsg[0] == "0":
-                incMsg = sock.recv(1024)
+                incMsg = sock.recv(self.BUFFSIZE)
                 msg += (incMsg[1:])
-            
-            #~ incMsg = sock.recv(1024)
-            try:
+                
+            #~ try:
+            if True:
                 msgNr, msgType, timestamp, data = self.unpackMsg(msg)
                 self.processMessage(msgNr, msgType, timestamp, data)
-            except:
-                pass
-                #~ self.UI.displayWarning("Command lost")
+            #~ except:
+                #~ print("failfish")
     
 
     def getTime(self):
@@ -236,108 +255,113 @@ class Communicator():
     ## functions for server and client
     
     def sendOK(self, answerID):
-        self.toDoList.put(self.packMsg(self.OK, answerID))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.OK, answerID)))
         
     ## functions for client/gui
         
     def sendEmergencyStop(self):
-        self.toDoList.put(self.packMsg(self, self.SHUTDOWN, "stop"))
+        self.toDoList.put((TOPPRIORITY, self.packMsg(self, self.SHUTDOWN, "stop")))
         
     def sendGetSpeed(self): 
-        self.toDoList.put(self.packMsg(self.GETSPEED, None)) 
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETSPEED, None)))
         
-    def sendSetTargetSpeed(self):
-        targetSpeed = self.getTargetSpeed()
-        self.toDoList.put(self.packMsg(self.RETURNTARGETSPEED, targetSpeed))
-        self.UI.displayWarning("target speed: "+str(targetSpeed))
+    #~ def sendSetTargetSpeed(self):
+        #~ targetSpeed = self.getTargetSpeed()
+        #~ self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNTARGETSPEED, targetSpeed))
+        #~ self.UI.displayWarning("target speed: "+str(targetSpeed))
         
     def sendReturnTargetSpeed(self):
         targetSpeed = self.getTargetSpeed()
-        self.toDoList.put(self.packMsg(self.RETURNTARGETSPEED, targetSpeed))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNTARGETSPEED, targetSpeed)))
         
         
     def sendGetTilt(self):
-        self.toDoList.put(self.packMsg(self.GETTILT, None))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETTILT, None)))
         
     def sendGetObstacles(self): 
-        self.toDoList.put(self.packMsg(self.GETOBSTACLES, None))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETOBSTACLES, None)))
     
     def sendReturnObstacles(self):
         obstacles = self.getObstacles()
-        self.toDoList.put(self.packMsg(self.RETURNOBSTACLES, obstacles))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNOBSTACLES, obstacles)))
         
     def sendGetBattery(self):
-        self.toDoList.put(self.packMsg(self.GETBATTERY, None))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETBATTERY, None)))
     
     def sendRecordList(self):
         lst = getRecordList()
-        self.toDoList.put(self.packMsg(self.SETRECORD, lst))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.SETRECORD, lst)))
         
     def sendGetRecordedStats(self):
-        self.toDoList.put(self.packMsg(self.GETRECORDEDSTATS, None))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETRECORDEDSTATS, None)))
         
     def sendGetSteerAngle(self):
-        self.toDoList.put(self.packMsg(self.GETSTEERANGLE, None))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETSTEERANGLE, None)))
     
     def sendReturnTargetSteerAngle(self):
         angle = self.getTargetSteerAngle()
-        self.toDoList.put(self.packMsg(self.RETURNTARGETSTEERANGLE, angle))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNTARGETSTEERANGLE, angle)))
         
-    def sendSetTargetSteerAngle(self):
-        targetAngle = self.getTargetSteerAngle()
-        self.toDoList.put(self.packMsg(self.SETTARGETSTEERANGLE, targetAngle))
-        self.UI.displayWarning("target Angle: "+str(targetAngle))
+    #~ def sendSetTargetSteerAngle(self):
+        #~ targetAngle = self.getTargetSteerAngle()
+        #~ self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.SETTARGETSTEERANGLE, targetAngle))
+        #~ self.UI.displayWarning("target Angle: "+str(targetAngle))
         
     def sendGetOrientation(self):
-        self.toDoList.put(self.packMsg(self.GETORIENTATION, None))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETORIENTATION, None)))
         
     def sendGetCameraImage(self):
-        self.toDoList.put(self.packMsg(self.GETCAMERAIMAGE, None))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETCAMERAIMAGE, None)))
         
     def sendUpdateLimits(self):
         
         minTilt, maxTilt = self.getLimits()
-        self.toDoList.put(self.packMsg(self.UPDATELIMITS , [minTilt, maxTilt]))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.UPDATELIMITS , [minTilt, maxTilt])))
+        
+    def sendSetTargets(self):
+        targetSpeed = self.getTargetSpeed()
+        targetAngle = self.getTargetSteerAngle()
+        self.toDoList.put((self.HIGHPRIORITY,  self.packMsg(self.SETTARGETS, [targetSpeed, targetAngle])))
 
     
     ## functions for server/bike
        
     def sendReturnSpeed(self):
         speed = self.getSpeed()
-        self.toDoList.put(self.packMsg(self.RETURNSPEED, speed))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNSPEED, speed)))
         
     def sendGetTargetSpeed(self):
-        self.toDoList.put(self.packMsg(self.GETTARGETSPEED, None))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETTARGETSPEED, None)))
     
     def sendReturnTilt(self):
         tilt = self.getTiltAngle()[1]
-        self.toDoList.put(self.packMsg(self.RETURNTILT, tilt)) 
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNTILT, tilt))) 
     
     def sendReturnBattery(self): 
         battery = self.getBattery()
-        self.toDoList.put(self.packMsg(self.RETURNBATTERY, battery))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNBATTERY, battery)))
     
     def sendWarnMsg(self, msg = ""):
-        self.toDoList.put(self.packMsg(self.WARNING, msg))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.WARNING, msg)))
     
     def sendReturnRecordedStats(self, stats = [] ):
-        self.toDoList.put(self.packMsg(self.RETURNRECORDEDSTATS, stats))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNRECORDEDSTATS, stats)))
         
     def sendReturnSteerAngle(self):
         angle = self.getSteerAngle()
-        self.toDoList.put(self.packMsg(self.RETURNSTEERANGLE, angle))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNSTEERANGLE, angle)))
     
     def sendGetTargetSteerAngle(self):
-        self.toDoList.put(self.packMsg(self.GETTARGETSTEERANGLE, None)) 
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETTARGETSTEERANGLE, None)))
         
 
     
     def sendReturnOrientation(self):
         ox, oy, oz = self.Sensor.getOrientation()
-        self.toDoList.put(self.packMsg(self.RETURNORIENTATION, [ox,oy, oz]))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNORIENTATION, [ox,oy, oz])))
     
     def sendReturnCameraImage(self):
-        self.toDoList.put(self.packMsg(self.RETURNCAMERAIMAGE, self.getCameraImage()))
+        self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNCAMERAIMAGE, self.getCameraImage())))
    
 
 
@@ -385,7 +409,6 @@ class Communicator():
         return self.UI.tgtSteer
         
     def getLimits(self):
-        print(5)
         return(self.UI.minTilt, self.UI.maxTilt)       
     
     def displayWarning(self, msg):
@@ -395,11 +418,11 @@ class Communicator():
     def setSpeed(self, speed):
         self.UI.updtSpeedSig.emit(speed)
     
-    def setTargetSpeed(self, speed):
-        print("target speed: ", speed)
+    #~ def setTargetSpeed(self, speed):
+        #~ print("target speed: ", speed)
         
-    def setTargetSteerAngle(self, angle):
-        print("target steer angle: ", angle)
+    #~ def setTargetSteerAngle(self, angle):
+        #~ print("target steer angle: ", angle)
         
     def updateObstacleMap(self, data):
         self.UI.updtObstSig.emit(data)
@@ -421,6 +444,10 @@ class Communicator():
         
     def setUpdateLimits(self, data):
         pass
+        
+    def setTargets(self, data):
+        targetSpeed = data[0]
+        targetAngle = data[1]
         
     ########################################################################
     # functions to handle and process messages
@@ -461,7 +488,7 @@ class Communicator():
                 print("timeout")
                 self.lock.release() 
                 return(False, False, None, None)
-        print("number used:", msgNr, msgType)
+        print("number used:", msgNr, msgType, requestnumber)
         self.lock.release() 
         return(False, False, None, None)
         
@@ -554,4 +581,7 @@ class Communicator():
             
         elif msgType == self.UPDATELIMITS:
             self.setLimits(data)
+            
+        elif msgType == self.SETTARGETS:
+            self.setTargets(data)
 

@@ -11,11 +11,11 @@ class Refresher():
     OBJFQZ = 0.2 #
     STEERFQZ = 0.5 #
     BATFQZ = 2 #
-    CAMFQZ = 0.2 #
+    CAMFQZ = 2 #
     
     
     POSFQZ = 0.2
-    ORTFQZ = 0.1
+    #~ ORTFQZ = 0.1
     
     
     refresh = False
@@ -34,7 +34,7 @@ class Refresher():
         #~ self.start()
     
     def start(self):
-        #~ self.refresh = True
+        self.refresh = True
         #~ self.update(SPEEDFQZ, self.con.sendGetSpeed)
 
         self.updateTilt() #
@@ -43,49 +43,55 @@ class Refresher():
         self.updateSteer() #
         self.updateSpeed() #
         self.updateCamera() #
-        #~ self.update(TILTFQZ, self.con.sendGetTilt)
+
     
     
     def stop(self):
         self.refresh = False
     
-    def pause(self, delay = 1):
-        self.pause = True
-        self.delay = delay
+    #~ def pause(self, delay = 1):
+        #~ self.pause = True
+        #~ self.delay = delay
         
     def updateTilt(self):
+        if self.refresh:
+            threading.Timer(self.TILTFQZ, self.updateTilt).start()
 
-        threading.Timer(self.TILTFQZ, self.updateTilt).start()
-
-        self.con.sendGetTilt()
+            self.con.sendGetTilt()
         
     def updateSpeed(self):
-        threading.Timer(self.SPEEDFQZ, self.updateSpeed).start()
+        if self.refresh:
+            threading.Timer(self.SPEEDFQZ, self.updateSpeed).start()
 
-        self.con.sendGetSpeed()
+            self.con.sendGetSpeed()
         
     def updateObj(self):
-        threading.Timer(self.OBJFQZ, self.updateObj).start()
+        if self.refresh:
+            threading.Timer(self.OBJFQZ, self.updateObj).start()
 
-        self.con.sendGetObstacles()
+            self.con.sendGetObstacles()
         
         
     def updateSteer(self):
-        threading.Timer(self.STEERFQZ, self.updateSteer).start()
+        if self.refresh:
+            threading.Timer(self.STEERFQZ, self.updateSteer).start()
 
-        self.con.sendGetSteerAngle()
+            self.con.sendGetSteerAngle()
         
     def updateOrientation(self):
-        threading.Timer(self.ORTFQZ, self.updateOrientation).start()
-        self.con.sendGetOrientation()
+        if self.refresh:
+            threading.Timer(self.ORTFQZ, self.updateOrientation).start()
+            self.con.sendGetOrientation()
        
     def updateBattery(self):
-        threading.Timer(self.BATFQZ, self.updateBattery).start()
-        self.con.sendGetBattery()
+        if self.refresh:
+            threading.Timer(self.BATFQZ, self.updateBattery).start()
+            self.con.sendGetBattery()
 
     def updateCamera(self):
-        threading.Timer(self.CAMFQZ, self.updateCamera).start()
-        self.con.sendGetCameraImage()
+        if self.refresh:
+            threading.Timer(self.CAMFQZ, self.updateCamera).start()
+            self.con.sendGetCameraImage()
 
         
         
@@ -115,4 +121,5 @@ class Refresher():
         
     def setOrtFqz(self, fqz):
         self.ORTFQZ = fqz
+        
 
