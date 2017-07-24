@@ -60,7 +60,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
     # constants for the plot of the obstacles
     # distance / y-coordinate
     OBSTMINDIST = 0
-    OBSTMAXDIST = 10
+    OBSTMAXDIST = 7
     # range of the plot in the x-coordinate
     OBSTMOSTLEFT = -5
     OBSTMOSTRIGHT = 5
@@ -232,32 +232,31 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         
     @QtCore.pyqtSlot(list)   
     def setCameraImage(self, data):   
-        
-        # for whtever reasons 6 bytes are added
-        data = numpy.fromstring(data[0], dtype='uint8')[:-6]
-        
-        # rgb
-        #~ dim = 3
-        #~ imageFormat = QtGui.QImage.Format_RGB888
-        # grayscale
-        dim = 1
-        imageFormat = QtGui.QImage.Format_Indexed8
-        
-        
-        data = data.reshape((480, 640, dim))
-        print("fssdf")
-        height, width = data.shape[:2]
-        
-        # cv images are BGR -> Convert to RGB
-        #~ data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
-        
-        
+        if data[0] != None:
+            # for whtever reasons 6 bytes are added
+            data = numpy.fromstring(data[0], dtype='uint8')[:-6]
+            
+            # rgb
+            #~ dim = 3
+            #~ imageFormat = QtGui.QImage.Format_RGB888
+            # grayscale
+            dim = 1
+            imageFormat = QtGui.QImage.Format_Indexed8
+            
+            
+            data = data.reshape((480, 640, dim))
+            height, width = data.shape[:2]
+            
+            # cv images are BGR -> Convert to RGB
+            #~ data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+            
+            
 
-        img = QtGui.QImage(data, width, height, width*dim, imageFormat)
-        self.cameraPixmap = QtGui.QPixmap.fromImage(img)
+            img = QtGui.QImage(data, width, height, width*dim, imageFormat)
+            self.cameraPixmap = QtGui.QPixmap.fromImage(img)
 
-        self.cameraLabel.setPixmap(self.cameraPixmap)
-        self.cameraLabel.update()
+            self.cameraLabel.setPixmap(self.cameraPixmap)
+            self.cameraLabel.update()
         
 
 class IPDialog(QtGui.QMainWindow, Ui_IPdialog):

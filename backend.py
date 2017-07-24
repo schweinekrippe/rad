@@ -8,10 +8,10 @@ class Refresher():
     
     SPEEDFQZ = 0.5 #
     TILTFQZ = 0.2 #
-    OBJFQZ = 0.2 #
+    OBJFQZ = 1 #
     STEERFQZ = 0.5 #
     BATFQZ = 2 #
-    CAMFQZ = 2 #
+    CAMFQZ = 0.5 #
     
     
     POSFQZ = 0.2
@@ -21,6 +21,14 @@ class Refresher():
     refresh = False
     
     pause = False
+    pauseSpeed = False
+    pauseTilt = False
+    pauseObj = False
+    pauseSteer = False
+    pauseBattery = False
+    pauseCamera = False
+    pauseCameraAndObst = False
+    
     
     
     delay = 0

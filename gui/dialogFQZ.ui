@@ -561,7 +561,7 @@ QProgressBar::chunk {
        <string>Update Intervall in seconds. 0.2 = 5 times per second.</string>
       </property>
       <property name="text">
-       <string>0.2</string>
+       <string>1</string>
       </property>
      </widget>
     </item>
@@ -616,7 +616,7 @@ QProgressBar::chunk {
        <string>Update Intervall in seconds. 0.2 = 5 times per second.</string>
       </property>
       <property name="text">
-       <string>0.2</string>
+       <string>0.5</string>
       </property>
      </widget>
     </item>
@@ -637,6 +637,16 @@ QProgressBar::chunk {
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>speed_entry</tabstop>
+  <tabstop>tilt_entry</tabstop>
+  <tabstop>objects_entry</tabstop>
+  <tabstop>position_entry</tabstop>
+  <tabstop>steer_entry</tabstop>
+  <tabstop>battery_entry</tabstop>
+  <tabstop>camera_entry</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

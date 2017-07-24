@@ -812,7 +812,7 @@ QProgressBar::chunk {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tiltTab">
        <attribute name="title">
@@ -1331,7 +1331,6 @@ QProgressBar::chunk {
     <addaction name="actionConnect_to_bike"/>
     <addaction name="actionSet_refresh_rates"/>
     <addaction name="actionSet_limits"/>
-    <addaction name="actionRun_bike"/>
     <addaction name="separator"/>
     <addaction name="actionLock_settings"/>
    </widget>
