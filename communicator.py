@@ -9,73 +9,26 @@ import Queue
 import backend
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui, uic
-from PIL import Image, ImageQt
 
 import random
-import cv2
-import numpy
 
 
+######################
+# to run at the bike, uncomment:
 
-class SensorData():
-    fakedata = range(-90, 90, 5)
-    i = 0
-    
-    fakeObst = [[[1,2,3],[4,5,6]],[[1,3,2]],[[1,7,4]],[[3,2,0.5]]]
-    j = 0
-    
-    switch = True
-    def getOrientation(self):
-        #~ print(len(self.fakedata), self.i)
-        data = self.fakedata[self.i]
-        self.i += 1
-        if self.i == 35:
-            self.i = 0
-            
-        
-        return [0, data, 0]
-        
-    def getLinAcc(self):
-        pass
-    
-    
-    def getObstacles(self):
-        data = self.fakeObst[self.j]
-        self.j += 1
-        if self.j == 3:
-            self.j = 0
-        return data
-    
-    def getBattery(self):
-        return(random.random()*100)
-        
-    def getSpeed(self):
-        return(random.random()*35)
-        
-    def getSteer(self):
-        return(random.random()*180 -90)
-        
-    def getCamera(self):
-        if self.switch:
-            #~ print("called")
-            self.switch = False
-            
-            return(cv2.imread('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckview.png',1))
-            #~ tmp = tmp.tostring()
-            
-            #~ print("tmp:", tmp, type(tmp))
-            #~ return(tmp)
-            
-        
-        else:
-            self.switch = True   
-            return(cv2.imread('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckviewinv.png', 1))
-            #~ return(open('C:\\Users\\Topfpflanze\\Documents\\pystuff\\rad\\images\\heckviewinv.png', "rb").read())
-        
+#~ import GUIPublisher
+#~ from communication.msg import controller
 
+#~ import listenerCombined
 
+######################
+
+        
 
 class Communicator():
+    
+    TIMEOFFSET = 0
+    TIMEOUT = 5000.000
     
     BUFFSIZE = 4096
     EOM = "iIUEOTM!"
@@ -83,16 +36,18 @@ class Communicator():
     TIMEOFFSET = 0
     TIMEOUT = 5000.000
     
-    # messages are sent in order of their priority
+    # messages are sent in order of their priority smaller number -> higher priority
     TOPPRIORITY = 0
     HIGHPRIORITY = 1
     NORMALPRIORITY = 2
     LOWPRIORITY = 3
     
     
+    
     DUMMY = 0
     OK = 1
-    SHUTDOWN = 2
+    SHUTDOWN = 20
+    RUNBIKE = 21
     GETSPEED = 30     # requests current speed setting
     RETURNSPEED = 31 # answers current speed setting
     SETTARGETSPEED = 32    # sets a new target speed
@@ -144,14 +99,18 @@ class Communicator():
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+
+        
+
+        
+
         if self.isServer == False:
             self.R = backend.Refresher(self)
             self.UI = parent
-            #~ print(parent)
-        
-        self.Sensor = SensorData()
-        
-        
+            
+        else:
+            self.L = listenerCombined.listenerCombined()
+            listenerCombined.listener("COMM_LISTENER")
     
     # sets the Ui
     # only neccessary for the client/bike
@@ -164,7 +123,9 @@ class Communicator():
 
         if self.isServer:
  
-            self.Sensor = SensorData()
+            #self.Sensor = SensorData()
+            
+            self.guiPublisher = GUIPublisher.Sender()
 
             self.server()
 
@@ -211,21 +172,10 @@ class Communicator():
     def sender(self, sock):
 
         while True:
-            #~ time.sleep(0.1)
-            #~ arr = []
             priority, msg = self.toDoList.get()
+            #~ print(priority, msg)
             #~ print(len(msg))
             self.sendRec(sock, msg+self.EOM)
-            #~ lenMsg = len(msg)
-            #~ for i in range (0, lenMsg, self.BUFFSIZE-1):
-                #~ if i >= lenMsg - (self.BUFFSIZE-1):
-                    #~ arr.append(bytes(1)+msg[i:])
-                        
-                #~ else:
-                    #~ arr.append(bytes(0)+msg[i:i + self.BUFFSIZE-1])
-        
-            #~ for element in arr:
-                #~ sock.sendall(element)        
     
        
     
@@ -274,11 +224,6 @@ class Communicator():
     def sendGetSpeed(self): 
         self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETSPEED, None)))
         
-    #~ def sendSetTargetSpeed(self):
-        #~ targetSpeed = self.getTargetSpeed()
-        #~ self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNTARGETSPEED, targetSpeed))
-        #~ self.UI.displayWarning("target speed: "+str(targetSpeed))
-        
     def sendReturnTargetSpeed(self):
         targetSpeed = self.getTargetSpeed()
         self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNTARGETSPEED, targetSpeed)))
@@ -311,10 +256,6 @@ class Communicator():
         angle = self.getTargetSteerAngle()
         self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.RETURNTARGETSTEERANGLE, angle)))
         
-    #~ def sendSetTargetSteerAngle(self):
-        #~ targetAngle = self.getTargetSteerAngle()
-        #~ self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.SETTARGETSTEERANGLE, targetAngle))
-        #~ self.UI.displayWarning("target Angle: "+str(targetAngle))
         
     def sendGetOrientation(self):
         self.toDoList.put((self.NORMALPRIORITY,  self.packMsg(self.GETORIENTATION, None)))
@@ -378,26 +319,28 @@ class Communicator():
     # functions to set and get data
     
     def getSteerAngle(self):
-        return self.Sensor.getSteer()
+        return self.L.getTargets()[1]
         
     def setSteerAngle(self, angle):
         self.UI.updtSteerAngSig.emit(angle)
     
     def getSpeed(self):
-        return self.Sensor.getSpeed()
+        return self.L.getTargets()[0]
         
     def getTargetSpeed(self):
         return self.UI.tgtSpeed
         
     def getTiltAngle(self):
-        return self.Sensor.getOrientation()
+        return self.L.getOrientation()
         
     def getObstacles(self):
-        obstacles = self.Sensor.getObstacles()
+        obstacles = self.L.getObstacles()
         return obstacles
     
     def getBattery(self):
-        return self.Sensor.getBattery()
+        #global L
+        return self.L.getBattery()
+        pass
         
     def getRecordList(self):
         recordList = [True, True, True, True, True, True]
@@ -412,7 +355,11 @@ class Communicator():
         return [tilt, steering, speed, obstacles]
     
     def getCameraImage(self):
-        return self.Sensor.getCamera()
+        print('getCameraImage')
+        cF = self.L.getCameraFeed()
+        print('getCF: ', cF[:3])
+        
+        return cF
 
     def getTargetSteerAngle(self):
         return self.UI.tgtSteer
@@ -427,11 +374,18 @@ class Communicator():
     def setSpeed(self, speed):
         self.UI.updtSpeedSig.emit(speed)
     
-    #~ def setTargetSpeed(self, speed):
-        #~ print("target speed: ", speed)
+    #def setTargetSpeed(self, speed):     
+        #self.GUIPublisher.setTargets([speed,0])
+        #print("target speed: ", speed)
         
-    #~ def setTargetSteerAngle(self, angle):
-        #~ print("target steer angle: ", angle)
+    #def setTargetSteerAngle(self, angle):
+        #self.GUIPublisher.setTargets([0,angle])
+        #print("target steer angle: ", angle)
+    
+    def setTargetSpeedAndAngle(self,data):
+        print('setTargetSpeedAndAngle: ', data)
+        self.guiPublisher.setTargets(data)
+        self.L.publishData(data)
         
     def updateObstacleMap(self, data):
         self.UI.updtObstSig.emit(data)
@@ -458,6 +412,9 @@ class Communicator():
         targetSpeed = data[0]
         targetAngle = data[1]
         
+    def runBike(self):
+        print("run bikey run")
+        
     ########################################################################
     # functions to handle and process messages
     
@@ -483,6 +440,7 @@ class Communicator():
         [msgNr, msgType, timestamp, data] = pickle.loads(packedData)
         
         
+        
         # prevent replay
         
         self.lock.acquire()
@@ -497,7 +455,7 @@ class Communicator():
                 print("timeout")
                 self.lock.release() 
                 return(False, False, None, None)
-        print("number used:", msgNr, msgType, requestnumber)
+        print("number used:", msgNr, msgType)
         self.lock.release() 
         return(False, False, None, None)
         
@@ -521,14 +479,17 @@ class Communicator():
             
         elif msgType == self.SETTARGETSPEED:
             print("target speed:", data)
-            self.setTargetSpeed(data)
+            self.setTargetSpeedAndAngle(data)
+            #self.setTargetSpeed(data)
             
         elif msgType == self.RETURNTARGETSPEED:
-            self.setTargetSpeed(data)
+            print('target speed and angle: ', data)
+            self.setTargetSpeedAndAngle(data)
         
         elif msgType == self.SETTARGETSTEERANGLE:
             print("target angle:", data)
-            self.setTargetSteerAngle(data)
+            #self.setTargetSteerAngle(data)
+            self.setTargetSpeedAndAngle(data)
             
         elif msgType == self.GETTILT:
             self.sendReturnTilt()
@@ -593,4 +554,7 @@ class Communicator():
             
         elif msgType == self.SETTARGETS:
             self.setTargets(data)
+        
+        elif msgType == self.RUNBIKE:
+            self.runBike()
 

@@ -37,11 +37,11 @@ class Refresher():
         self.refresh = True
         #~ self.update(SPEEDFQZ, self.con.sendGetSpeed)
 
-        #~ self.updateTilt() #
-        #~ self.updateObj() #
-        #~ self.updateBattery() #
-        #~ self.updateSteer() #
-        #~ self.updateSpeed() #
+        self.updateTilt() #
+        self.updateObj() #
+        self.updateBattery() #
+        self.updateSteer() #
+        self.updateSpeed() #
         self.updateCamera() #
 
     

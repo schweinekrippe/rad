@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1060</width>
+    <width>1051</width>
     <height>490</height>
    </rect>
   </property>
@@ -812,7 +812,7 @@ QProgressBar::chunk {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tiltTab">
        <attribute name="title">
@@ -912,9 +912,9 @@ QProgressBar::chunk {
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>10</y>
-          <width>532</width>
-          <height>399</height>
+          <y>-2</y>
+          <width>541</width>
+          <height>411</height>
          </rect>
         </property>
         <property name="text">
@@ -1176,7 +1176,7 @@ QProgressBar::chunk {
        <number>0</number>
       </property>
       <property name="maximum">
-       <number>35</number>
+       <number>20</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -1319,7 +1319,7 @@ QProgressBar::chunk {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1060</width>
+     <width>1051</width>
      <height>21</height>
     </rect>
    </property>
@@ -1331,6 +1331,7 @@ QProgressBar::chunk {
     <addaction name="actionConnect_to_bike"/>
     <addaction name="actionSet_refresh_rates"/>
     <addaction name="actionSet_limits"/>
+    <addaction name="actionRun_bike"/>
     <addaction name="separator"/>
     <addaction name="actionLock_settings"/>
    </widget>
@@ -1422,6 +1423,11 @@ QProgressBar::chunk {
     <string>Set limits</string>
    </property>
   </action>
+  <action name="actionRun_bike">
+   <property name="text">
+    <string>Run bike</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1442,8 +1448,14 @@ QProgressBar::chunk {
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
+  <tabstop>speedSlider</tabstop>
+  <tabstop>steerSlider</tabstop>
+  <tabstop>submitSpeedAndTilt</tabstop>
   <tabstop>emergencyStopButton</tabstop>
   <tabstop>msgList</tabstop>
+  <tabstop>tilt</tabstop>
+  <tabstop>Compass</tabstop>
+  <tabstop>AnalysisTabs</tabstop>
  </tabstops>
  <resources/>
  <connections>

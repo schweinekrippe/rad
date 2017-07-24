@@ -76,7 +76,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.lmd = LIMDialog(self)
         
         # init variables
-        self.host = "localhost"
+        self.host = "10.42.0.1"
         self.port = 9999
         self.tgtSpeed = 0
         self.tgtSteer = 0
@@ -172,6 +172,10 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.Com = com.Communicator(self.host, self.port, server=False, parent = self)
         thread.start_new_thread(self.Com.run, ())
         
+    #~ def runBike(self):
+        #~ if self.connectionEstablished:
+            #~ self.Com.send
+        
     def submitTargets(self):
         if self.connectionEstablished:
             self.tgtSpeed = self.speedSlider.value()
@@ -228,14 +232,28 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         
     @QtCore.pyqtSlot(list)   
     def setCameraImage(self, data):   
-        data = numpy.fromstring(data[0], dtype='uint8')
-        data = data.reshape((798, 192, 3))
+        
+        # for whtever reasons 6 bytes are added
+        data = numpy.fromstring(data[0], dtype='uint8')[:-6]
+        
+        # rgb
+        #~ dim = 3
+        #~ imageFormat = QtGui.QImage.Format_RGB888
+        # grayscale
+        dim = 1
+        imageFormat = QtGui.QImage.Format_Indexed8
+        
+        
+        data = data.reshape((480, 640, dim))
+        print("fssdf")
         height, width = data.shape[:2]
         
         # cv images are BGR -> Convert to RGB
-        data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+        #~ data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+        
+        
 
-        img = QtGui.QImage(data, width, height, width*3, QtGui.QImage.Format_RGB888)
+        img = QtGui.QImage(data, width, height, width*dim, imageFormat)
         self.cameraPixmap = QtGui.QPixmap.fromImage(img)
 
         self.cameraLabel.setPixmap(self.cameraPixmap)

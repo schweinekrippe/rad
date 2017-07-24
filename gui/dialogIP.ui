@@ -674,6 +674,14 @@ QProgressBar::chunk {
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>IP1_entry</tabstop>
+  <tabstop>IP2_entry</tabstop>
+  <tabstop>IP3_entry</tabstop>
+  <tabstop>IP4_entry</tabstop>
+  <tabstop>PORT_entry</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
