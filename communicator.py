@@ -1,6 +1,6 @@
 import socket
 import sys
-import pickle
+import cPickle as pickle
 
 import thread
 import time
@@ -77,7 +77,8 @@ class SensorData():
 
 class Communicator():
     
-    BUFFSIZE = 1024
+    BUFFSIZE = 4096
+    EOM = "iIUEOTM!"
     
     TIMEOFFSET = 0
     TIMEOUT = 5000.000
@@ -211,39 +212,47 @@ class Communicator():
 
         while True:
             #~ time.sleep(0.1)
-            arr = []
+            #~ arr = []
             priority, msg = self.toDoList.get()
-            lenMsg = len(msg)
-            for i in range (0, lenMsg, self.BUFFSIZE-1):
-                if i >= lenMsg - self.BUFFSIZE-1:
-                    arr.append(bytes(1)+msg[i:i + self.BUFFSIZE-1])
+            #~ print(len(msg))
+            self.sendRec(sock, msg+self.EOM)
+            #~ lenMsg = len(msg)
+            #~ for i in range (0, lenMsg, self.BUFFSIZE-1):
+                #~ if i >= lenMsg - (self.BUFFSIZE-1):
+                    #~ arr.append(bytes(1)+msg[i:])
                         
-                else:
-                    arr.append(bytes(0)+msg[i:i + self.BUFFSIZE-1])
+                #~ else:
+                    #~ arr.append(bytes(0)+msg[i:i + self.BUFFSIZE-1])
         
-            for element in arr:
-                sock.sendall(element)        
+            #~ for element in arr:
+                #~ sock.sendall(element)        
     
        
-            
-            
     
+
+    def sendRec(self, sock, msg):
+        if len(msg) > self.BUFFSIZE:
+            chunk = msg[0:self.BUFFSIZE]
+            sock.sendall(chunk)
+            self.sendRec(sock, msg[self.BUFFSIZE:])
+        else:
+            sock.sendall(msg)
+
+
     def receiver(self, sock):
+
+        msg = ""
         while True:
 
-            msg = ""
-            incMsg = "0"
-    
-            while incMsg[0] == "0":
-                incMsg = sock.recv(self.BUFFSIZE)
-                msg += (incMsg[1:])
-                
-            #~ try:
-            if True:
-                msgNr, msgType, timestamp, data = self.unpackMsg(msg)
+
+            msg += sock.recv(self.BUFFSIZE)
+            lst = msg.split(self.EOM)
+            msg = lst.pop()
+            for element in lst:
+                msgNr, msgType, timestamp, data = self.unpackMsg(element)
                 self.processMessage(msgNr, msgType, timestamp, data)
-            #~ except:
-                #~ print("failfish")
+
+
     
 
     def getTime(self):
