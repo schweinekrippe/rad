@@ -1,4 +1,4 @@
-C:\Python27\python.exe "client.py"
+C:\Python27\python.exe "test.py"
 
 pause
 del "%0"

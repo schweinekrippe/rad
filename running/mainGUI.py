@@ -6,11 +6,10 @@
 import sys
 from PyQt4 import QtCore, QtGui, uic
 
-import gui.ipdialog as ipD
+#~ import gui.ipdialog as ipD
 from PyQt4.QtGui import *
 import thread
 import communicator as com
-import backend
 import matplotlib
 import matplotlib.figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
@@ -23,19 +22,19 @@ import cv2
 # GUI files
 ########################################################################
  
-ipFile = "dialogIP.ui" # Enter file here.
+ipFile = "UI//dialogIP.ui" # Enter file here.
  
 Ui_IPdialog, QtBaseClass = uic.loadUiType(ipFile)
 
-fqzFile = "dialogFQZ.ui" # Enter file here.
+fqzFile = "UI//dialogFQZ.ui" # Enter file here.
  
 Ui_FQZdialog, QtBaseClass = uic.loadUiType(fqzFile)
 
-limFile = "dialogLIM.ui"
+limFile = "UI//dialogLIM.ui"
 
 Ui_LIMdialog, QtBaseClass = uic.loadUiType(limFile)
 
-mainFile= "MainWindow.ui" # Enter file here.
+mainFile= "UI//MainWindow.ui" # Enter file here.
  
 Ui_Main, QtBaseClass = uic.loadUiType(mainFile)
 
@@ -60,7 +59,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
     # constants for the plot of the obstacles
     # distance / y-coordinate
     OBSTMINDIST = 0
-    OBSTMAXDIST = 10
+    OBSTMAXDIST = 7
     # range of the plot in the x-coordinate
     OBSTMOSTLEFT = -5
     OBSTMOSTRIGHT = 5
@@ -83,19 +82,17 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         
         self.maxTilt = 30
         self.minTilt = 0
-        
-        self.cameraPixmap = QtGui.QPixmap('heckviewinv.png')
-        
+               
         
         #test mode
         self.connectionEstablished = False
         
         # set graphics
-        self.tiltPixmap = QtGui.QPixmap('heckviewinv.png')
+        self.tiltPixmap = QtGui.QPixmap('Images//heckviewinv.png')
         self.tiltImg.setPixmap( self.tiltPixmap)
-        self.middleImg.setPixmap( QtGui.QPixmap('middleLine.png'))
+        self.middleImg.setPixmap( QtGui.QPixmap('Images//middleLine.png'))
         
-        self.emergencyStopButton.setIcon(QtGui.QIcon('stop40.png'))
+        self.emergencyStopButton.setIcon(QtGui.QIcon('Images//stop40.png'))
         
         
         #connect all buttons to functions
@@ -115,8 +112,6 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.updtBatterySig.connect(self.setBatteryState, QtCore.Qt.QueuedConnection)
         self.updtSteerAngSig.connect(self.setSteeringAngle, QtCore.Qt.QueuedConnection)
         self.updtCameraImageSig.connect(self.setCameraImage, QtCore.Qt.QueuedConnection)
-        #~ self.updtObstSig.connect(self.updateObstacleMap, QtCore.Qt.QueuedConnection)
-        
         
         # setup the display
         
@@ -145,9 +140,12 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.msgList.scrollToBottom()
         
     # send a message to the bike to stop
-    # TODO: send message
     def emergencyStop(self):
-        self.displayWarning("Emergency stop initiated")
+        if self.connectionEstablished:
+            self.displayWarning("Emergency stop initiated")
+            self.Com.sendEmergencyStop()
+        else:
+            self.displayWarning("can't send STOP if not connected")
         
         
     #sets the battery state to value (in %)
@@ -172,10 +170,7 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.Com = com.Communicator(self.host, self.port, server=False, parent = self)
         thread.start_new_thread(self.Com.run, ())
         
-    #~ def runBike(self):
-        #~ if self.connectionEstablished:
-            #~ self.Com.send
-        
+    
     def submitTargets(self):
         if self.connectionEstablished:
             self.tgtSpeed = self.speedSlider.value()
@@ -222,14 +217,9 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         self.obstMap.axes.grid()
         
         for obst in obstData:
-            #~ print("obst:", obst)
             self.obstMap.axes.plot([obst[0], obst[1]], [obst[2], obst[2]], 'k-', lw=2)
             
         self.obstMap.axes.figure.canvas.draw_idle()
-        #~ self.obstMap.canvas.draw()
-        #~ self.obstMap.show()
-        #~ self.obstMap.update()
-        
     @QtCore.pyqtSlot(list)   
     def setCameraImage(self, data):   
         
@@ -239,13 +229,13 @@ class MainWindow(QtGui.QMainWindow, Ui_Main):
         # rgb
         #~ dim = 3
         #~ imageFormat = QtGui.QImage.Format_RGB888
+        
         # grayscale
         dim = 1
         imageFormat = QtGui.QImage.Format_Indexed8
         
         
         data = data.reshape((480, 640, dim))
-        print("fssdf")
         height, width = data.shape[:2]
         
         # cv images are BGR -> Convert to RGB
