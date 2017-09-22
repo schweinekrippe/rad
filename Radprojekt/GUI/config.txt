@@ -1,0 +1,14 @@
+# This file is executed as code. So be carefull!
+
+
+# The path to the database. If it allready exists, data is appended.
+# Otherwise the database is created. It is recommended to use a seperate
+# database for every run, as the break in time will be part of the charts.
+
+DBPATH = 'C:/data/db/bikedata.db'
+DBPATH = 'C:/data/db/dummydata.db'
+
+# Maximum of executions before the data is written to the disk
+# A high number increases the performance but a
+# power loss will result in more lost information
+MAXEXBFCOM = 500        
