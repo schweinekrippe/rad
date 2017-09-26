@@ -1,0 +1,193 @@
+% !TeX spellcheck = en_US
+\documentclass[]{scrreprt}
+
+\usepackage[english]{babel}
+\usepackage{enumitem}
+\usepackage[official]{eurosym}
+\usepackage{pbox}
+\usepackage{float}
+
+% Title Page
+\title{An Autonomous Bicycle}
+\subtitle{GUI, Database, Connectivity}
+\author{Christian Kreipl}
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\begin{abstract}
+	No previous work to built upon. Everything has to be done from scratch.
+\end{abstract}
+
+\chapter{Goal}
+\chapter{Choice of mobile device}
+	At first we are supposed to choose a suitable mobile device to display data, send commands to the bike and display recorded data. To be able to decide on a certain device, we need to specify its requirements. We consider the following points:
+
+	\begin{itemize}[noitemsep]
+		\item{Display size and resolution}
+		\item{Connection options}
+		\item{Operating system}
+		\item{Input type}
+	\end{itemize}
+
+	With respect to:
+	\begin{itemize}[noitemsep]
+		\item{Mobility}
+		\item{Usability}
+		\item{Effort to maintain and setup}
+		\item{Price}
+	\end{itemize}
+
+	To rate the options we introduce the rating system shown in table \ref{tab:RAW}.
+	\begin{table}[H]
+		\caption {Ratings and weights} \label{tab:RAW}
+		\centering
+		\begin{tabular}{|c|c|c|c|c|}
+			\hline 
+			Very positive & Positive & Neutral & Negative & Very negative \\ 
+			\hline 
+			+ + & + & 0 & - & - - \\ 
+			\hline \hline
+			Very important & Important & Neutral & Unimportant & Very unimportant \\ 
+			\hline 
+			VI & I & 0 & U & VU \\ 
+			\hline
+		\end{tabular}
+	\end{table}
+
+	We rate with and without respect to the price. In the latter case the price is matched to a reasonable device. E.g. if there is a 600\euro device and another device, that fits our purposes, for 200\euro, the cheaper device would be chosen. Usually there are cheaper devices available then the minimal price that is stated in the following tables. This devices are usually to weak to be considered as relevant candidates and therefore left out.
+
+	\begin{table}[H]
+		\caption {Display size and resolution} \label{tab:DSAR}
+		\centering
+	\begin{tabular}{|c||c|c|c|c|}
+		\hline 
+		& Small ( $< 5''$) & Medium ( $5'' - 10''$) & Large ( $> 10''$) & \\ 
+		\hline \hline
+		Usability & \begin{pbox}{3.0cm}{\vspace{.2\baselineskip}fairly hard to see details\vspace{.3\baselineskip}}\end{pbox} & \begin{pbox}{2.0cm}{\vspace{.2\baselineskip}easy to see details\vspace{.3\baselineskip}}\end{pbox} & \begin{pbox}{2.0cm}{\vspace{.2\baselineskip}easy to see details\vspace{.3\baselineskip}}\end{pbox} & VI\\
+		\hline 
+		Price & $80$\euro+ & 150\euro+ & 200\euro+ & I \\  
+		\hline 
+		Resolution & up to 2160p & 720p - 2160p & up to 4K & U\\ 
+		\hline 
+		Weight & low & low - medium & medium - high & 0\\ 
+		\hline
+		CPU & low - medium & medium & medium - high & I \\
+		\hline \hline
+		Rating w/o \euro& - & 0 & +& \\
+		\hline
+		Rating with \euro& - & + & 0&\\
+		\hline
+	\end{tabular}
+	\end{table}
+
+	The ''small'' devices are smartphones, the ''medium'' sized devices are usually tablets or netbooks and the ''large'' devices are laptops. Desktop PCs are ruled out because of their lack of mobility. The smaller the device is, the higher is the mobility of the user, but also it is problematic to display a lot of data at the same time and allow control. The price scales with the computational power of the device.
+
+	\begin{table}[H]
+		\caption{Input devices} \label{tab:ID}
+		\centering
+	\begin{tabular}{|c||c|c|c|}
+		\hline 
+		& Touch display & Mouse \& keyboard &\\ 
+		\hline \hline
+		Mobility & high (smartphone, tablet) & medium - high (laptops) & I\\ 
+		\hline
+		Usability & high & high & VI\\
+		\hline
+		Price & 0 & 0 & U\\
+		\hline
+		\begin{pbox}{2.5cm}{\vspace{.2\baselineskip}Effort to setup and maintain\vspace{.3\baselineskip}} \end{pbox}  &
+		\begin{pbox}{4.0cm}{high if OS $\ne$ Android, otherwise low} \end{pbox}& \begin{pbox}{4.0cm}{low} \end{pbox} & VI\\
+		
+		\hline \hline
+		Rating & \begin{pbox}{4.0cm}{\vspace{.2\baselineskip}+ if OS = Android, otherwise - -\vspace{.3\baselineskip}} \end{pbox} & + & \\
+		\hline
+
+	\end{tabular}
+	\end{table}
+	
+	In the considered devices the input type is already built in. Therefore no additional costs are added. This applies to other parts aswell. For instance are almost any mobile devices equipped with WLAN and Bluetooth. If a touch display is chosen, the operating system should be Android (iOS devices are generally to expensive for our purposes). 
+	
+	\begin{table}[H]
+		\caption{Connections} \label{tab:CONN}
+		\centering
+		\begin{tabular}{|c||c|c|c|c|}
+			\hline 
+			& WLAN & Mobile network & Bluetooth &  \\ 
+			\hline \hline
+			Range & 85m &  global & 5-10m &  I\\ 
+			\hline 
+			Price & 0 & 2x 10\euro& 0 & 0\\ 
+			\hline 
+			Volume & $\infty$ & 1GB Data / Month &$ \infty$ & I\\ 
+			\hline 
+			Latency & 1-80ms &
+			\begin{pbox}{5.0cm}{\vspace{.2\baselineskip}GSM: latency 500 ms+\\
+					EDGE: latency 300-400 ms\\
+					UMTS: latency ~200 ms\\
+					LTE: 35-40 ms (advertised with 10 ms)\vspace{.3\baselineskip}} \end{pbox}
+			& 	\begin{pbox}{3.0cm}{\vspace{.2\baselineskip}40-250 ms (40ms was the lowest latency advertised)\vspace{.3\baselineskip}} \end{pbox} & I \\ 
+			\hline
+			\begin{pbox}{2.4cm}{\vspace{.2\baselineskip}Effort to setup and maintain\vspace{.3\baselineskip}} \end{pbox} & low & high & high & VI\\
+			\hline \hline
+			Rating w/o \euro& + + & 0 & - & \\
+			\hline
+			Rating with \euro & + + & - & - & \\
+			\hline
+		\end{tabular} 
+	\end{table}
+	The best option for the connection type is WLAN. It has a sufficient range, is free is fairly easy to use and maintain. It is assumed, that the bike is in an area that is free of disturbing signals. The bike supports both 2.4 Ghz and 5 Ghz. However it is not able to open a 5 Ghz hotspot due to legal restrictions. The WLAN adapter is not region locked and therefore  can't open an access point. It can however connect to a network that is spanned by a router or the mobile device. Bluetooth would only be an option if the usecase would be restricted to someone moving in close distance to the bike, e.g. riding on it. The global range of the mobile network comes at the price, that a mobile device must be attached to the bike be able to open the connection. This increases the risk of failures, limits the data that can be sent and is a huge effort to setup. In the current usecase the global range is not even useful, as the bike is not expected to move far from the controller. 
+	% hier test einfügen!
+	
+	\begin{table}[H]
+		\caption{Operating system} \label{tab:OS}
+		\centering
+		\begin{tabular}{|c||c|c|c|c|}
+			\hline 
+			& Android & Linux & Windows &  \\ 
+			\hline \hline
+			Usability & 
+			\begin{pbox}{3.0cm}{\vspace{.2\baselineskip}good support for touch, allows easy access to sensors\vspace{.3\baselineskip}} \end{pbox}
+			 & \begin{pbox}{5.0cm}{\vspace{.2\baselineskip}possibly bad \\driver support\vspace{.3\baselineskip}} \end{pbox} & \begin{pbox}{5.0cm}{\vspace{.2\baselineskip} usually good \\driver support\vspace{.3\baselineskip}} \end{pbox} & VI \\ 
+			\hline 
+			Price & 0 & 0 & 0-280\euro & 0 \\ 
+			\hline 
+			\begin{pbox}{2.4cm}{\vspace{.2\baselineskip}Effort to setup and maintain\vspace{.3\baselineskip}} \end{pbox} & high & low & low & I \\ 
+			\hline \hline
+			Rating w/o \euro & 0 & 0 & + &  \\ 
+			\hline 
+			Rating with \euro & 0 & 0 & 0 &  \\ 
+			\hline 
+		\end{tabular} 
+	\end{table}
+	The operating systems are all fairly equal with their own strengths and weaknesses. None of them has a huge advantage against the others. A touch display probably has the best support under Android and Windows 8. The additional access to the built in sensors would make the effort to set it up and get an application running valuable. If no special hardware is required, Linux provides an open environment and a lot of freedom. The operating system should therefore be chosen with respect to the underlying hardware. 
+	\begin{table}[H]
+		\caption{Final comparison} \label{tab:FC}
+		\centering
+		\begin{tabular}{|c|c|c|c|}
+			\hline 
+			& Android & Linux & Windows \\ 
+			\hline 
+			Smartphone & - & N/A & - \\
+			\hline 
+			Tablet & +  & + & + \\
+			\hline 
+			Laptop & 0 & 0 & 0 \\
+			\hline 
+			
+		\end{tabular} 
+	\end{table}
+	As shown in table \ref{tab:FC}, there is no clear favorite. Depending on personal preferences, every combination of hardware and operating system can be viable. In the authors opinion a tablet suits the purpose best. It has a decent amount of computational power and other resources. Further it is very mobile and allows the extension of the communication through a mobile network by LTE support.
+	
+	
+	
+
+\chapter{GUI}
+\chapter{Database}
+\chapter{Communication}
+\chapter{Student project}
+
+	
+\end{document}          

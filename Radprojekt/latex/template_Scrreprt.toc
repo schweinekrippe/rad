@@ -1,0 +1,7 @@
+\select@language {english}
+\contentsline {chapter}{\numberline {1}Goal}{4}
+\contentsline {chapter}{\numberline {2}Choice of mobile device}{5}
+\contentsline {chapter}{\numberline {3}GUI}{9}
+\contentsline {chapter}{\numberline {4}Database}{10}
+\contentsline {chapter}{\numberline {5}Communication}{11}
+\contentsline {chapter}{\numberline {6}Student project}{12}
