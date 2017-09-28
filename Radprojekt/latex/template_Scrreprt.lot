@@ -1,0 +1,23 @@
+\select@language {english}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Ratings and weights}}{5}
+\contentsline {table}{\numberline {2.2}{\ignorespaces Display size and resolution}}{6}
+\contentsline {table}{\numberline {2.3}{\ignorespaces Input devices}}{6}
+\contentsline {table}{\numberline {2.4}{\ignorespaces Connections}}{7}
+\contentsline {table}{\numberline {2.5}{\ignorespaces Operating system}}{8}
+\contentsline {table}{\numberline {2.6}{\ignorespaces Final comparison}}{9}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Comparison of two database systems}}{13}
+\contentsline {table}{\numberline {4.2}{\ignorespaces Implemented methods for ''DB writer''}}{15}
+\contentsline {table}{\numberline {4.3}{\ignorespaces Implemented methods for ''DB reader''}}{16}
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Priorities}}{18}
+\contentsline {table}{\numberline {5.2}{\ignorespaces Short description of the methods involved in the sending process. See figure \ref {fig:sendMsg}}}{19}
+\contentsline {table}{\numberline {5.3}{\ignorespaces List of supported message types. Not all types are in use. New message types can be added easily.}}{21}
+\contentsline {table}{\numberline {5.4}{\ignorespaces Interfaces I}}{22}
+\contentsline {table}{\numberline {5.5}{\ignorespaces Interfaces II}}{22}
+\contentsline {table}{\numberline {5.6}{\ignorespaces Interfaces III}}{22}
+\contentsline {table}{\numberline {5.7}{\ignorespaces Interfaces IV}}{22}
+\addvspace {10\p@ }
